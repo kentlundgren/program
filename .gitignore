@@ -1,0 +1,23 @@
+# Generella mönster
+node_modules/
+dist/
+build/
+.vscode/
+*.log
+*.tmp
+
+# Specifika filer som visas i Source Control
+testprogram/**/settings*.json
+testprogram/**/*.key
+testprogram/**/api-proxy.php
+testprogram/**/direct-*
+testprogram/**/dokumentation
+testprogram/**/package-lock.json
+
+# Andra mönster
+.DS_Store
+Thumbs.db
+.env
+.env.local
+coverage/
+.idea/ 
