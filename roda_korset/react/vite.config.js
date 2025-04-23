@@ -11,6 +11,8 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    emptyOutDir: true,  // Rensar dist-mappen helt innan varje ny build
+    // Detta förhindrar att gamla assets-filer blir kvar
   }
 }); 

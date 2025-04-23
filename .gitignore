@@ -16,12 +16,17 @@ next-env.d.ts
 *.pack.old
 
 # Specifika filer som visas i Source Control
-testprogram/**/settings*.json
-testprogram/**/*.key
-testprogram/**/api-proxy.php
-testprogram/**/direct-*
-testprogram/**/dokumentation
-testprogram/**/package-lock.json
+# Ignorera hela testprogram-mappen och allt innehåll
+testprogram/
+testprogram/**/*
+
+# Tidigare specifika filter (behålls som referens)
+# testprogram/**/settings*.json
+# testprogram/**/*.key
+# testprogram/**/api-proxy.php
+# testprogram/**/direct-*
+# testprogram/**/dokumentation
+# testprogram/**/package-lock.json
 
 # Andra mönster
 .DS_Store
