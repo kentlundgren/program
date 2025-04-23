@@ -1,0 +1,221 @@
+ <!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering v34</title>
+    <link rel="stylesheet" href="styles34.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Städavtalshantering v34</h1>
+        <div class="header-links">
+            <a href="https://kentlundgren.se/program/stadning_beskrivning.html" target="_blank">Guide för tydliga städavtal</a>
+            <a href="https://kentlundgren.se/program/aldre_stadning7.html" target="_blank">Sök äldre avtal</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Informationsruta -->
+        <div class="info-box">
+            <h3>Viktig information</h3>
+            <ul>
+                <li>Period anges i format YYYYMM (exempel: 202501)</li>
+                <li>Endast period för år 2025 är tillåten (202501-202512)</li>
+                <li>Intäktskonto 3153 används som standard</li>
+                <li>Kostnadskonto 6132 används som standard</li>
+            </ul>
+            <div class="dimensions-info">
+                <h4>Excel-filen innehåller följande 17 dimensioner i denna ordning:</h4>
+                <div class="dimensions-grid">
+                    <div>1. Rad</div>
+                    <div>2. Konto</div>
+                    <div>3. Ansvar</div>
+                    <div>4. Projekt (tom)</div>
+                    <div>5. Anl (tom)</div>
+                    <div>6. Verksamhet</div>
+                    <div>7. Aktivitet</div>
+                    <div>8. Motpart</div>
+                    <div>9. Objekt/Frikod</div>
+                    <div>10. MK (tom)</div>
+                    <div>11. MS (tom)</div>
+                    <div>12. Period</div>
+                    <div>13. Periodiseringsnyckel (tom)</div>
+                    <div>14. Val.belopp</div>
+                    <div>15. Valuta (tom)</div>
+                    <div>16. Belopp</div>
+                    <div>17. Text</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulär för nytt städavtal -->
+        <div class="form-container">
+            <h2>Registrera nytt städavtal</h2>
+            <form id="contractForm">
+                <!-- Grundinformation -->
+                <div class="form-section">
+                    <h3>Grundinformation</h3>
+                    <div class="form-group">
+                        <label for="contractName">Avtalsnamn:</label>
+                        <input type="text" id="contractName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="period">Period (YYYYMM):</label>
+                        <input type="text" 
+                               id="period" 
+                               required 
+                               pattern="2025(0[1-9]|1[0-2])"
+                               placeholder="202501"
+                               title="Ange period i format YYYYMM (endast år 2025 tillåtet)">
+                        <div class="help-text">Exempel: 202501 för januari 2025</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="konto">Kostnadskonto:</label>
+                        <input type="text" id="konto" value="6132" required>
+                        <div class="help-text">Standard: 6132</div>
+                    </div>
+                </div>
+
+                <!-- Kostnadskontering -->
+                <div class="form-section cost-section">
+                    <h3>Kostnadskontering</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="costAnsvar">Ansvar för kostnad:</label>
+                            <select id="costAnsvar" required>
+                                <option value="">Välj ansvar...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="costVerksamhet">Verksamhet för kostnad:</label>
+                            <select id="costVerksamhet" required>
+                                <option value="">Välj först ansvar...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="kombinationsVarning" class="varning-meddelande" style="display: none;"></div>
+                </div>
+
+                <!-- Objektkodhantering -->
+                <div class="form-section">
+                    <h3>Objektkodshantering</h3>
+                    <div class="form-group">
+                        <label for="objectCodeType">Typ av objektkodshantering:</label>
+                        <select id="objectCodeType" required>
+                            <option value="">Välj typ...</option>
+                            <option value="2a">2a - Samma objektkod för både kontering av intäkter och kostnader</option>
+                            <option value="2b">2b - Utan objektkod</option>
+                            <option value="2c">2c - Objektkod endast på intäkter</option>
+                            <option value="2d">2d - Objektkod endast på kostnader</option>
+                        </select>
+                    </div>
+                    <div id="objectCodeSection" class="form-group" style="display: none;">
+                        <label for="objectCode">Objektkod:</label>
+                        <input type="text" id="objectCode">
+                    </div>
+                </div>
+
+                <!-- Aktiviteter -->
+                <div class="form-section activities-section">
+                    <h3>Aktiviteter och belopp</h3>
+                    
+                    <!-- Fast intäkt -->
+                    <div class="activity-container">
+                        <h4>Fast intäkt (aktivitet: 8036)</h4>
+                        <div class="amount-grid">
+                            <div class="form-group">
+                                <label for="yearly8036">Årsbelopp (kr):</label>
+                                <input type="number" id="yearly8036" step="0.01">
+                            </div>
+                            <div class="form-group monthly-amount">
+                                <label for="amount8036">Månadsbelopp (kr):</label>
+                                <input type="number" id="amount8036" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ansvar8036">Ansvar:</label>
+                            <select id="ansvar8036" required></select>
+                        </div>
+                    </div>
+
+                    <!-- Fönsterputs -->
+                    <div class="activity-container">
+                        <h4>Fönsterputs (aktivitet: 8035)</h4>
+                        <div class="amount-grid">
+                            <div class="form-group">
+                                <label for="yearly8035">Årsbelopp (kr):</label>
+                                <input type="number" id="yearly8035" step="0.01">
+                            </div>
+                            <div class="form-group monthly-amount">
+                                <label for="amount8035">Månadsbelopp (kr):</label>
+                                <input type="number" id="amount8035" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ansvar8035">Ansvar:</label>
+                            <select id="ansvar8035" required></select>
+                        </div>
+                    </div>
+
+                    <!-- Storstädning -->
+                    <div class="activity-container">
+                        <h4>Storstädning (aktivitet: 8032)</h4>
+                        <div class="amount-grid">
+                            <div class="form-group">
+                                <label for="yearly8032">Årsbelopp (kr):</label>
+                                <input type="number" id="yearly8032" step="0.01">
+                            </div>
+                            <div class="form-group monthly-amount">
+                                <label for="amount8032">Månadsbelopp (kr):</label>
+                                <input type="number" id="amount8032" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ansvar8032">Ansvar:</label>
+                            <select id="ansvar8032" required></select>
+                        </div>
+                    </div>
+
+                    <div class="total-amount">
+                        <h4>Totalt månadsbelopp:</h4>
+                        <div id="totalAmount">0 kr</div>
+                    </div>
+                </div>
+
+                <!-- Motpart -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="motpart">Motpart för intäkter:</label>
+                        <select id="motpart" required>
+                            <option value="">Välj motpart...</option>
+                            <option value="120">120 - UTBildning</option>
+                            <option value="130">130 - OMSorg</option>
+                            <option value="150">150 - Stadsledningsförvaltning</option>
+                            <option value="162">162 - Kultur och Fritid</option>
+                            <option value="170">170 - Individ och familjeförvaltningen</option>
+                            <option value="180">180 - Teknik och Fritid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Spara avtal</button>
+                    <button type="button" onclick="window.location.reload()">Rensa formulär</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lista över befintliga avtal -->
+        <div class="contracts-container">
+            <h2>Befintliga städavtal</h2>
+            <div id="contractsList"></div>
+        </div>
+    </div>
+
+    <script type="module" src="stadavtal34.js"></script>
+</body>
+</html>

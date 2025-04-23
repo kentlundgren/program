@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Städavtalshantering version 36 - System för hantering av städavtal och kontering">
+    <title>Städavtalshantering - Version 36</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+          rel="stylesheet" 
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+          crossorigin="anonymous">
+
+    <!-- Egen CSS -->
+    <link rel="stylesheet" href="styles36.css">
+
+    <!-- Nödvändiga JavaScript-bibliotek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <!-- Huvudcontainer -->
+    <div class="container mt-4">
+        <!-- Huvudrubrik -->
+        <header class="mb-4">
+            <h1>Städavtalshantering - Version 36</h1>
+            <p class="lead">System för hantering av städavtal och kontering</p>
+        </header>
+
+        <!-- Huvudinnehåll -->
+        <main>
+            <div class="row">
+                <!-- Vänster kolumn - Konteringsformulär -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Kontering av städavtal</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Ansvarskodsektion -->
+                            <div class="mb-4">
+                                <label for="ansvarSelect" class="form-label fw-bold">Ansvarskod:</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="ansvarSelect" required>
+                                        <option value="">-- Välj ansvarskod --</option>
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" id="nyAnsvarBtn">
+                                        Ny kod
+                                    </button>
+                                </div>
+                                <div class="form-text">Välj existerande kod eller skapa ny</div>
+                            </div>
+
+                            <!-- Verksamhetskodsektion -->
+                            <div class="mb-4">
+                                <label for="verksamhetSelect" class="form-label fw-bold">Verksamhetskod:</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="verksamhetSelect" required>
+                                        <option value="">-- Välj verksamhetskod --</option>
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" id="nyVerksamhetBtn">
+                                        Ny kod
+                                    </button>
+                                </div>
+                                <div class="form-text">Välj existerande kod eller skapa ny</div>
+                            </div>
+
+                            <!-- Feedback-sektion -->
+                            <div id="konteringFeedback" class="alert d-none" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Höger kolumn - Statistik och översikt -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h2 class="card-title h5 mb-0">Översikt och statistik</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="översiktInfo">
+                                <!-- Statistik laddas via JavaScript -->
+                                <p>Laddar statistik...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer med information -->
+        <footer class="mt-4 text-muted">
+            <p class="small">Städavtalshantering Version 36 - Utvecklad för kommunal verksamhet</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+            crossorigin="anonymous"></script>
+
+    <!-- Egen JavaScript - läses in sist -->
+    <script src="stadavtal36.js"></script>
+
+    <!-- Utvecklarläge-indikator -->
+    <script>
+        console.log('Städavtalshantering Version 36 - Utvecklarläge aktivt');
+    </script>
+</body>
+</html>

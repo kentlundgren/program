@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolada API Datahämtning</title>
+    <br> Kodningen är i en html fil, en styles.css fil och script.js filen är uppdelad 
+    i en app.js (för applikationslogik) och en api.js (för API-kommunikation). 
+    Detta följer "separation of concerns"-principen vilket gör koden mer underhållbar och testbar.  
+    <br>För att att se en kodning där hela programmet ligger i samma (html) fil, se <a href="https://kentlundgren.se/program/kolada" target="_blank">här</a>   
+    <br>För att se ett snyggt program som också hämtar <a href="https://www.kolada.se/" target="_blank">Kolada data</a>, se
+     <a href="https://www.linkedin.com/posts/jonatan-tensetti_kolada-geojson-activity-7300802081647415296-HsVv?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAEEmhUBJFMl4As3Jry0YGt-4cCaqzq9zus" target="_blank">Jonatan Tensettis</a> program <a href="https://codepen.io/Tensetti/full/KwKgLpG" target="_blank">här</a>
+    <br>
+    <br>
+    <!-- Länk till extern CSS-fil -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Kolada API Datahämtning</h1>
+        <p>Använd formuläret nedan för att söka och hämta data från Kolada API.</p>
+        
+        <div id="errorContainer" class="error" style="display: none;"></div>
+        <div id="infoContainer" class="info" style="display: none;"></div>
+        
+        <div class="form-group">
+            <label for="kpiType">Välj KPI-kategori:</label>
+            <select id="kpiType">
+                <option value="">Välj en kategori</option>
+                <!-- Populeras med JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="kpi">Välj nyckeltal (KPI):</label>
+            <select id="kpi" disabled>
+                <option value="">Välj först en kategori</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="municipality">Välj kommun:</label>
+            <select id="municipality">
+                <option value="">Välj en kommun</option>
+                <!-- Populeras med JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="years">Ange år (t.ex. 2020-2023):</label>
+            <input type="text" id="years" placeholder="2020-2023" value="2020-2023">
+        </div>
+        
+        <div class="button-group">
+            <button id="previewData">Förhandsgranska</button>
+            <button id="fetchData">Hämta data</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            Hämtar data, var god vänta...
+        </div>
+        
+        <div id="results">
+            <h2>Resultat</h2>
+            <div id="tableContainer"></div>
+        </div>
+        
+        <div class="debug-toggle">
+            <button id="toggleDebug">Visa/dölj felsökningsinformation</button>
+        </div>
+        <div id="debugInfo" class="debug-info" style="display: none;"></div>
+    </div>
+
+    <!-- Länk till externa JavaScript-filer -->
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

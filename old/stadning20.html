@@ -1,0 +1,65 @@
+  <!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering</title>
+    <link rel="stylesheet" href="styles20.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="stadavtal20.js" defer></script>
+</head>
+<body>
+    <h1>Städavtalshantering</h1>
+
+    <section>
+        <h2>Registrera nytt städavtal</h2>
+        <form id="contractForm">
+            <div>
+                <label for="konto">Konto:</label>
+                <input type="text" id="konto" name="konto" required>
+            </div>
+            <div>
+                <label for="ansvar">Ansvar:</label>
+                <input type="text" id="ansvar" name="ansvar" required>
+            </div>
+            <div>
+                <label for="verksamhet">Verksamhet:</label>
+                <input type="text" id="verksamhet" name="verksamhet" required>
+            </div>
+            <div>
+                <label for="aktivitet">Aktivitet:</label>
+                <input type="text" id="aktivitet" name="aktivitet" required>
+            </div>
+            <div>
+                <label for="motpart">Motpart:</label>
+                <input type="text" id="motpart" name="motpart" required>
+            </div>
+            <div>
+                <label for="objekt">Objekt:</label>
+                <input type="text" id="objekt" name="objekt">
+            </div>
+            <div>
+                <label for="period">Period (YYYYMM):</label>
+                <input type="text" id="period" name="period" required>
+            </div>
+            <div>
+                <label for="belopp">Belopp:</label>
+                <input type="number" id="belopp" name="belopp" required>
+            </div>
+            <div>
+                <label for="text">Beskrivning:</label>
+                <textarea id="text" name="text" required></textarea>
+            </div>
+            <button type="submit">Lägg till avtal</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Lista över städavtal</h2>
+        <div id="contractsList">
+            <p>Inga städavtal tillagda ännu.</p>
+        </div>
+        <button onclick="exportToExcel()">Exportera till Excel</button>
+    </section>
+</body>
+</html>

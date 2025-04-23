@@ -1,0 +1,165 @@
+<!-- 
+===========================================
+DEL 1: HUVUDSTRUKTUR OCH METADATA
+Detta avsnitt innehåller grundläggande HTML-struktur,
+metadata och länkning till externa resurser
+=========================================== 
+-->
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Städavtalshantering version 37 - System för smart hantering av städavtal och kontering">
+    <title>Städavtalshantering - Version 37</title>
+
+    <!-- Externa CSS-bibliotek -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+          rel="stylesheet">
+    
+    <!-- Egna stilar -->
+    <link rel="stylesheet" href="styles37.css">
+    
+    <!-- Externa JavaScript-bibliotek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+<!-- SLUT PÅ DEL 1 -->
+
+<!-- 
+===========================================
+DEL 2: KONTERINGSFORMULÄR MED SMART REKOMMENDATION
+Detta avsnitt innehåller huvudformuläret för kontering
+med det smarta rekommendationssystemet
+=========================================== 
+-->
+    <div class="container mt-4">
+        <header class="mb-4">
+            <h1>Städavtalshantering - Version 37</h1>
+            <p class="lead">System för smart hantering av städavtal och kontering</p>
+        </header>
+
+        <main>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="card-title h5 mb-0">Kontering av städavtal</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Ansvarskodsektion -->
+                            <div class="mb-4">
+                                <label for="ansvarSelect" class="form-label fw-bold">Ansvarskod:</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="ansvarSelect" required>
+                                        <option value="">-- Välj ansvarskod --</option>
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" id="nyAnsvarBtn">
+                                        Ny kod
+                                    </button>
+                                </div>
+                                <div class="form-text">Välj existerande kod eller skapa ny</div>
+                            </div>
+
+                            <!-- Verksamhetskodsektion med rekommendationer -->
+                            <div class="mb-4">
+                                <label for="verksamhetSelect" class="form-label fw-bold">Verksamhetskod:</label>
+                                <div id="rekommendationerPanel" class="alert alert-info mb-2 d-none">
+                                    <strong>Rekommenderade verksamhetskoder:</strong>
+                                    <div id="rekommendationerLista"></div>
+                                </div>
+                                <div class="input-group">
+                                    <select class="form-select" id="verksamhetSelect" required>
+                                        <option value="">-- Välj verksamhetskod --</option>
+                                    </select>
+                                    <button class="btn btn-outline-primary" type="button" id="nyVerksamhetBtn">
+                                        Ny kod
+                                    </button>
+                                </div>
+                                <div class="form-text">Välj kod från listan eller skapa ny</div>
+                            </div>
+
+                            <!-- Feedback för vald kombination -->
+                            <div id="kombinationFeedback" class="alert d-none" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+<!-- SLUT PÅ DEL 2 -->
+
+<!-- 
+===========================================
+DEL 3: STATISTIK OCH ÖVERSIKTSPANEL
+Detta avsnitt innehåller statistik och översiktsinformation
+=========================================== 
+-->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h2 class="card-title h5 mb-0">Översikt och statistik</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Statistikpanel -->
+                            <div id="statistikPanel">
+                                <h3 class="h6 mb-3">Generell statistik</h3>
+                                <div id="översiktInfo"></div>
+                            </div>
+
+                            <!-- Vanliga kombinationer -->
+                            <div id="vanligaKombinationer" class="mt-4">
+                                <h3 class="h6 mb-3">Vanliga kombinationer</h3>
+                                <div id="kombinationerLista" class="small">
+                                    <!-- Fylls dynamiskt via JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-4 text-muted">
+            <p class="small">Städavtalshantering Version 37 - Utvecklad för kommunal verksamhet</p>
+        </footer>
+    </div>
+<!-- SLUT PÅ DEL 3 -->
+
+<!-- 
+===========================================
+DEL 4: JAVASCRIPT-REFERENSER OCH MODALER
+Detta avsnitt innehåller modaler för nya koder och 
+referenser till JavaScript-filer
+=========================================== 
+-->
+    <!-- Modal för ny kod -->
+    <div class="modal fade" id="nyKodModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Lägg till ny kod</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nyKodInput" class="form-label">Ny kod:</label>
+                        <input type="text" class="form-control" id="nyKodInput" 
+                               placeholder="Ange den nya koden" maxlength="10">
+                        <div class="form-text">Ange den nya koden (endast siffror, max 10 tecken)</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-primary" id="sparaNyKodBtn">Spara</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Egen JavaScript -->
+    <script src="stadavtal37.js"></script>
+</body>
+</html>
+<!-- SLUT PÅ DEL 4 -->

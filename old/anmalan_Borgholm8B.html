@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borgholm Event Registration - Version 8</title>
+
+    <!-- Debug information i konsolen -->
+    <script>
+        console.log('=== BORGHOLM REGISTRATION SYSTEM v8 ===');
+        console.log('Debugging är aktiverat');
+        
+        // Funktion för att logga viktiga händelser
+        window.debugLog = (message) => {
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] ${message}`);
+        };
+    </script>
+
+    <!-- React och ReactDOM via CDN för HTML-kompatibilitet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+    <!-- Firebase setup och konfiguration -->
+    <script type="module">
+        // Importera Firebase-funktioner
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        window.debugLog('Firebase moduler laddade');
+
+        // Vänta tills DOM är redo
+        document.addEventListener('DOMContentLoaded', () => {
+            window.debugLog('DOM Content Loaded - Initierar Firebase');
+            
+            try {
+                // Firebase configuration - ERSÄTT MED DIN EGEN KONFIGURATION
+                const firebaseConfig = {
+                    apiKey: "YOUR_API_KEY",
+                    authDomain: "YOUR_AUTH_DOMAIN",
+                    databaseURL: "YOUR_DATABASE_URL",
+                    projectId: "YOUR_PROJECT_ID",
+                    storageBucket: "YOUR_STORAGE_BUCKET",
+                    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+                    appId: "YOUR_APP_ID"
+                };
+
+                // Initiera Firebase
+                const app = initializeApp(firebaseConfig);
+                const db = getDatabase(app);
+                window.debugLog('Firebase initialiserad framgångsrikt');
+
+                // Gör Firebase tillgängligt globalt
+                window.firebaseDb = db;
+                window.firebaseRef = ref;
+                window.firebaseSet = set;
+                window.firebaseOnValue = onValue;
+                window.firebaseRemove = remove;
+
+                // Signalera att Firebase är redo
+                window.dispatchEvent(new Event('firebaseReady'));
+                window.debugLog('Firebase Ready event dispatched');
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                window.debugLog('FEL vid Firebase-initialisering: ' + error.message);
+                window.dispatchEvent(new CustomEvent('firebaseError', { detail: error }));
+            }
+        });
+    </script>
+
+    <style>
+        /* === GRUNDLÄGGANDE STYLING === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        /* === CONTAINER OCH GRID LAYOUT === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === FORMULÄR OCH INPUT STYLING === */
+        .input-field {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* === KNAPPAR === */
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* === DELTAGARLISTOR === */
+        .participant-card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .preferences-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .preferences-list li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        /* === STATUSINDIKATOR === */
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .sync-indicator.hidden {
+            opacity: 0;
+        }
+
+        /* === LOADING OCH ERROR STATES === */
+        .loading-state, .error-state {
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .loading-state {
+            color: #2196F3;
+        }
+
+        .error-state {
+            color: #f44336;
+            border: 1px solid #ffcdd2;
+        }
+
+        /* === DEBUG INDICATOR === */
+        .debug-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug indicator som visar att debugging är aktiverat -->
+    <div class="debug-indicator">Debug Mode Active</div>
+    
+    <!-- Root element för React-appen -->
+    <div id="root"></div>
+    
+    <!-- Dold information om tangentkombination för reset -->
+    <!-- Alt + Shift + R för att nollställa databasen -->
+    <div style="display: none;">Reset: Alt + Shift + R</div>
+</body>
+</html>

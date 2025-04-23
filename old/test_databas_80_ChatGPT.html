@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <!--
+    ===========================================
+    PROGRAM: BORGHOLM RESA PLANNER v1.2
+    ===========================================
+    Detta program är en React-komponentbaserad webbapplikation som tillåter tio deltagare att justera dagordningen för en resa till Borgholm den 8-9 mars 2025.
+
+    BESKRIVNING:
+    - Använder React för att bygga ett interaktivt användargränssnitt.
+    - Använder JSX för bättre läsbarhet och enklare kodstruktur.
+    - Använder Firebase Realtime Database för att lagra deltagarnas svar.
+    - Implementerar responsiv design med flexbox och media queries.
+    - Inkluderar kommentarer och beskrivningar för att förklara varje del av koden.
+    - Alla inmatningsfält är gulmarkerade för tydlighet.
+    - En liten "Radera"-knapp finns längst ner till höger för att rensa data.
+
+    OM PROGRAMMET:
+    En fördel med interaktiva React-baserade program är att man direkt kan se resultatet. React-komponenter är byggda för att vara dynamiska och reagera på användarinteraktion. Detta skiljer sig från statisk HTML och vanlig JavaScript-baserad programmering.
+
+    Detta program, för att fungera i en .html-fil, använder "Client-side React med HTML-integration", vilket är ett av två huvudsakliga sätt att utveckla React-applikationer. Det innebär att vi laddar React direkt via CDN. Detta gör programmet enkelt att integrera i befintliga webbsidor (men begränsar vissa moderna React-funktioner).
+
+    Lär dig mer om <a href="https://reactjs.org/" target="_blank">React</a>.
+    Lär dig mer om <a href="https://firebase.google.com/" target="_blank">Firebase</a>.
+
+    HISTORIA:
+    - **React** utvecklades av Facebook (nu Meta) och lanserades 2013. Det är ett JavaScript-bibliotek för att bygga användargränssnitt.
+    - **Firebase** startades 2011 som en realtidsdatabas och förvärvades av Google 2014. Det erbjuder en mängd olika tjänster för mobil- och webbapplikationer.
+    -->
+    <!-- Content Security Policy (CSP) för att tillåta nödvändiga resurser -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://*.firebaseio.com https://*.firebaseapp.com https://*.googleapis.com;
+        connect-src 'self' https://*.firebaseio.com https://*.googleapis.com wss://*.firebaseio.com;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://www.gstatic.com https://www.gstatic.com/firebasejs/11.0.0/ https://*.googleapis.com;
+        style-src 'self' 'unsafe-inline';
+        font-src 'self' data: https://fonts.gstatic.com;
+    ">
+    <!-- Inkludera nödvändiga meta-taggar -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- React och Babel via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin></script>
+
+    <!-- CSS för styling och responsiv design -->
+    <style>
+        /* Grundläggande styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .section {
+            flex: 1 1 30%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+        }
+        .section input, .section textarea {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+            background-color: #ffffcc; /* Gulmarkerad */
+        }
+        .section label {
+            font-weight: bold;
+        }
+        /* Responsiv design */
+        @media (max-width: 800px) {
+            .section {
+                flex: 1 1 45%;
+            }
+        }
+        @media (max-width: 500px) {
+            .section {
+                flex: 1 1 100%;
+            }
+        }
+        /* Radera-knapp */
+        .delete-button {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .delete-button:hover {
+            background-color: #ff3333;
+        }
+        /* Knappstil */
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        /* Länkstil */
+        a {
+            color: #2196F3;
+        }
+    </style>
+    <title>Borgholm Resa Planner</title>
+</head>
+<body>
+    <!-- JSX Test -->
+    <div id="jsx-test"></div>
+    <script type="text/babel">
+        const JsxTest = () => <div><h2>JSX fungerar korrekt!</h2></div>;
+        ReactDOM.createRoot(document.getElementById('jsx-test')).render(<JsxTest />);
+    </script>
+
+    <!-- Non-JSX Test -->
+    <div id="no-jsx-test"></div>
+    <script>
+        const NoJsxTest = () => React.createElement('div', null, React.createElement('h2', null, 'Non-JSX fungerar korrekt!'));
+        ReactDOM.createRoot(document.getElementById('no-jsx-test')).render(React.createElement(NoJsxTest));
+    </script>
+
+    <!-- Firebase SDK via Modules -->
+    <script type="module">
+        // Importera nödvändiga funktioner från Firebase SDK
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+        import { getDatabase, ref, set, push, onValue, remove } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js';
+
+        // Din Firebase-konfiguration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCbsFdT8up5b_niUzFh9jLP6Lhhj8UFFk",
+            authDomain: "borgholm-registration.firebaseapp.com",
+            databaseURL: "https://borgholm-registration-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "borgholm-registration",
+            storageBucket: "borgholm-registration.appspot.com",
+            messagingSenderId: "203337885231",
+            appId: "1:203337885231:web:30fdc40a452f46040348da"
+        };
+
+        // Initiera Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Gör Firebase-funktioner tillgängliga globalt
+        window.firebase = {
+            database,
+            ref,
+            set,
+            push,
+            onValue,
+            remove
+        };
+    </script>
+
+    <!-- Huvudapplikationen -->
+    <div id="root"></div>
+
+    <!-- React-komponent -->
+    <script type="text/babel">
+        // Huvudkomponenten
+        const App = () => {
+            const [participants, setParticipants] = React.useState([]);
+            const [currentUser, setCurrentUser] = React.useState({
+                name: '',
+                confirm: false,
+                departureTime: '08:00',
+                departureTimeAlt: '',
+                saunaTime: '15:00-18:00',
+                saunaTimeAlt: '',
+                dinnerTime: '19:00',
+                dinnerPlace: 'Lundgrens Garage',
+                dinnerTimeAlt: '',
+                dinnerPlaceAlt: '',
+                morningSaunaTime: '08:00-10:00',
+                morningSaunaAlt: '',
+                lunchPlace: 'Arontorp i Färjestaden',
+                lunchPlaceAlt: ''
+            });
+
+            // Hämta deltagare från Firebase
+            React.useEffect(() => {
+                const participantsRef = window.firebase.ref(window.firebase.database, 'participants');
+                window.firebase.onValue(participantsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const participantsList = Object.values(data);
+                        setParticipants(participantsList);
+                    } else {
+                        setParticipants([]);
+                    }
+                });
+            }, []);
+
+            // Hantera formulärinmatning
+            const handleChange = (e) => {
+                const { name, value, type, checked } = e.target;
+                setCurrentUser(prevState => ({
+                    ...prevState,
+                    [name]: type === 'checkbox' ? checked : value
+                }));
+            };
+
+            // Skicka data till Firebase
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const participantsRef = window.firebase.ref(window.firebase.database, 'participants');
+                const newParticipantRef = window.firebase.push(participantsRef);
+                window.firebase.set(newParticipantRef, currentUser);
+                alert('Dina val har sparats!');
+                // Nollställ formuläret
+                setCurrentUser({
+                    name: '',
+                    confirm: false,
+                    departureTime: '08:00',
+                    departureTimeAlt: '',
+                    saunaTime: '15:00-18:00',
+                    saunaTimeAlt: '',
+                    dinnerTime: '19:00',
+                    dinnerPlace: 'Lundgrens Garage',
+                    dinnerTimeAlt: '',
+                    dinnerPlaceAlt: '',
+                    morningSaunaTime: '08:00-10:00',
+                    morningSaunaAlt: '',
+                    lunchPlace: 'Arontorp i Färjestaden',
+                    lunchPlaceAlt: ''
+                });
+            };
+
+            // Radera all data
+            const handleDelete = () => {
+                if (window.confirm('Är du säker på att du vill radera all data?')) {
+                    const participantsRef = window.firebase.ref(window.firebase.database, 'participants');
+                    window.firebase.remove(participantsRef);
+                    alert('All data har raderats.');
+                }
+            };
+
+            return (
+                <div>
+                    <h1>Borgholm Resa Planner</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className="container">
+                            {/* Namn och bekräftelse */}
+                            <div className="section">
+                                <label>Namn:</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={currentUser.name}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="confirm"
+                                        checked={currentUser.confirm}
+                                        onChange={handleChange}
+                                    />
+                                    Jag vill delta
+                                </label>
+                            </div>
+                            {/* Avresetid */}
+                            <div className="section">
+                                <label>Avresetid från Skåne:</label>
+                                <input
+                                    type="text"
+                                    name="departureTime"
+                                    value={currentUser.departureTime}
+                                    readOnly
+                                />
+                                <label>Alternativ avresetid:</label>
+                                <input
+                                    type="text"
+                                    name="departureTimeAlt"
+                                    value={currentUser.departureTimeAlt}
+                                    onChange={handleChange}
+                                    placeholder="Ange alternativ tid"
+                                />
+                            </div>
+                            {/* Bastutid */}
+                            <div className="section">
+                                <label>Bastutid i Borgholm:</label>
+                                <input
+                                    type="text"
+                                    name="saunaTime"
+                                    value={currentUser.saunaTime}
+                                    readOnly
+                                />
+                                <label>Alternativ bastutid:</label>
+                                <input
+                                    type="text"
+                                    name="saunaTimeAlt"
+                                    value={currentUser.saunaTimeAlt}
+                                    onChange={handleChange}
+                                    placeholder="Ange alternativ tid"
+                                />
+                            </div>
+                            {/* Middag */}
+                            <div className="section">
+                                <label>Middagstid och plats:</label>
+                                <input
+                                    type="text"
+                                    name="dinnerTime"
+                                    value={currentUser.dinnerTime}
+                                    readOnly
+                                />
+                                <input
+                                    type="text"
+                                    name="dinnerPlace"
+                                    value={currentUser.dinnerPlace}
+                                    readOnly
+                                />
+                                <label>Alternativ tid och plats:</label>
+                                <input
+                                    type="text"
+                                    name="dinnerTimeAlt"
+                                    value={currentUser.dinnerTimeAlt}
+                                    onChange={handleChange}
+                                    placeholder="Ange alternativ tid"
+                                />
+                                <input
+                                    type="text"
+                                    name="dinnerPlaceAlt"
+                                    value={currentUser.dinnerPlaceAlt}
+                                    onChange={handleChange}
+                                    placeholder="Ange alternativ plats"
+                                />
+                            </div>
+                            {/* Söndagsbastu */}
+                            <div className="section">
+                                <label>Söndags bastu:</label>
+                                <input
+                                    type="text"
+                                    name="morningSaunaTime"
+                                    value={currentUser.morningSaunaTime}
+                                    readOnly
+                                />
+                                <label>Alternativ tid och plats:</label>
+                                <input
+                                    type="text"
+                                    name="morningSaunaAlt"
+                                    value={currentUser.morningSaunaAlt}
+                                    onChange={handleChange}
+                                    placeholder="Ange alternativ tid och plats"
+                                />
+                            </div>
+                            {/* Lunch */}
+                            <div className="section">
+                                <label>Lunchplats söndag:</label>
+                                <input
+                                    type="text"
+                                    name="lunchPlace"
+                                    value={currentUser.lunchPlace}
+                                    readOnly
+                                />
+                                <label>Alternativ plats:</label>
+                                <input
+                                    type="text"
+                                    name="lunchPlaceAlt"
+                                    value={currentUser.lunchPlaceAlt}
+                                    onChange={handleChange}
+                                    placeholder="Ange alternativ plats"
+                                />
+                            </div>
+                        </div>
+                        <button type="submit">Skicka in</button>
+                    </form>
+                    {/* Lista av deltagare */}
+                    <h2>Registrerade deltagare</h2>
+                    <ul>
+                        {participants.map((participant, index) => (
+                            <li key={index}>
+                                <strong>{participant.name}</strong> - {participant.confirm ? 'Kommer' : 'Kommer ej'}
+                            </li>
+                        ))}
+                    </ul>
+                    {/* Radera-knapp */}
+                    <button className="delete-button" onClick={handleDelete}>Radera data</button>
+
+                    {/* Information om React och Firebase */}
+                    <p>
+                        Detta är ett React-komponentbaserat program. Lär dig mer om
+                        <a href="https://reactjs.org/" target="_blank"> React</a> och
+                        <a href="https://firebase.google.com/" target="_blank"> Firebase</a>.
+                    </p>
+                </div>
+            );
+        };
+
+        // Rendera applikationen
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+/**
+ * CSS-modul för Navigation-komponenten
+ */
+
+.navigation {
+  margin-bottom: var(--spacing-sm);
+}
+
+.tabs {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: 0;
+}
+
+.tabs li {
+  margin: 0;
+}
+
+.tab {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--light-gray);
+  color: var(--secondary-color);
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+  cursor: pointer;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  text-decoration: none;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 1rem;
+}
+
+.tab:hover, .tab:focus {
+  background-color: var(--accent-color);
+  text-decoration: none;
+  color: var(--secondary-color);
+}
+
+.tab.active {
+  background-color: var(--primary-color);
+  color: var(--white);
+  font-weight: bold;
+}
+
+.tab i {
+  font-size: 1rem;
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+  .tabs {
+    justify-content: center;
+  }
+  
+  .tab {
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .tab {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .tab span {
+    display: none; /* Dölj text på små skärmar, visa bara ikoner */
+  }
+  
+  .tab i {
+    margin-right: 0;
+    font-size: 1.2rem;
+  }
+} 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sveriges Tullavgifter</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sveriges Tullavgifter</h1>
+        <p>Interaktiv karta över tullavgifter mellan Sverige och andra länder</p>
+    </header>
+
+    <main>
+        <!-- Vänster panel med instruktioner -->
+        <div class="left-panel">
+            <div class="instruction-panel">
+                <h2>Instruktioner</h2>
+                <div id="stats-content">
+                    <p>Klicka på ett land på kartan för att se procentuella tullavgifter mellan Sverige och det landet.</p>
+                    <p>Applikationen visar de viktigaste handelspartnerna och deras tullavgifter i procent.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kartan i mitten -->
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-controls">
+                <button id="reset-view">Återställ vy</button>
+            </div>
+        </div>
+
+        <!-- Höger panel med resultat -->
+        <div class="right-panel">
+            <div id="info-panel">
+                <h2>Resultat</h2>
+                <div id="tull-details">
+                    <p>Välj ett land på kartan för att se detaljerad information om tullavgifter.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Data hämtad från Tullverket och internationella källor | Senast uppdaterad: 2024 | Tullavgifter för USA baserade på faktiska värden</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

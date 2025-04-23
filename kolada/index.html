@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolada API Datahämtning</title>
+    Program för att hämta data från <a href="https://www.kolada.se/" target="_blank">Kolada</a> - Här ligger hela programmet i samma html fil - 
+    För snyggare kodning - uppdelning av programmet i en api.js, en app.js, en styles.css och en html-fil, se <a href="https://kentlundgren.se/program/kolada4/" target="_blank">här</a>.  
+    <br>Märk att söker man på antal invånare i t ex Lund får man bara halva befolkningen, eftersom nyckeltal N01951 innehåller eg tre nyckeltal, Kvinnor, Män och Totalt  
+    (se 
+    <a href="https://api.kolada.se/v2/data/kpi/N01951/municipality/1281/year/2021,2022,2023" target="_blank">här</a>). Det är rättat i ovanstående version av programmet.
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        h1, h2 {
+            color: #0066cc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #previewData {
+            background-color: #28a745;
+        }
+
+        #previewData:hover {
+            background-color: #218838;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .error {
+            color: #dc3545;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .info {
+            color: #0066cc;
+            padding: 10px;
+            background-color: #e6f3ff;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .debug-toggle {
+            text-align: right;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kolada API Datahämtning</h1>
+        <p>Använd formuläret nedan för att söka och hämta data från Kolada API.</p>
+        
+        <div id="errorContainer" class="error" style="display: none;"></div>
+        <div id="infoContainer" class="info" style="display: none;"></div>
+        
+        <div class="form-group">
+            <label for="kpiType">Välj KPI-kategori:</label>
+            <select id="kpiType">
+                <option value="">Välj en kategori</option>
+                <!-- Populeras med JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="kpi">Välj nyckeltal (KPI):</label>
+            <select id="kpi" disabled>
+                <option value="">Välj först en kategori</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="municipality">Välj kommun:</label>
+            <select id="municipality">
+                <option value="">Välj en kommun</option>
+                <!-- Populeras med JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="years">Ange år (t.ex. 2020-2023):</label>
+            <input type="text" id="years" placeholder="2020-2023" value="2020-2023">
+        </div>
+        
+        <div class="button-group">
+            <button id="previewData">Förhandsgranska</button>
+            <button id="fetchData">Hämta data</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            Hämtar data, var god vänta...
+        </div>
+        
+        <div id="results">
+            <h2>Resultat</h2>
+            <div id="tableContainer"></div>
+        </div>
+        
+        <div class="debug-toggle">
+            <button id="toggleDebug">Visa/dölj felsökningsinformation</button>
+        </div>
+        <div id="debugInfo" class="debug-info" style="display: none;"></div>
+    </div>
+
+    <script>
+        // ===== ALL JAVASCRIPT-KOD LIGGER NU DIREKT I HTML-FILEN =====
+        
+        // Globala variabler för att lagra data
+        let allKpiGroups = [];
+        let allMunicipalities = [];
+        let dataAvailabilityCache = {}; // Cache för datatillgänglighet
+
+        // DOM-element
+        const kpiTypeSelect = document.getElementById('kpiType');
+        const kpiSelect = document.getElementById('kpi');
+        const municipalitySelect = document.getElementById('municipality');
+        const yearsInput = document.getElementById('years');
+        const fetchDataButton = document.getElementById('fetchData');
+        const previewDataButton = document.getElementById('previewData');
+        const loadingDiv = document.getElementById('loading');
+        const errorContainer = document.getElementById('errorContainer');
+        const infoContainer = document.getElementById('infoContainer');
+        const tableContainer = document.getElementById('tableContainer');
+        const debugInfo = document.getElementById('debugInfo');
+
+        // BasURL för Kolada API
+        const API_BASE_URL = 'https://api.kolada.se/v2';
+
+        // Hjälpfunktion för att lägga till felsökningsinformation
+        function addDebugInfo(message) {
+            console.log(message);
+            if (debugInfo) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugInfo.innerHTML += `[${timestamp}] ${message}<br>`;
+            }
+        }
+
+        // Visar ett felmeddelande
+        function showError(message) {
+            if (errorContainer) {
+                errorContainer.textContent = message;
+                errorContainer.style.display = 'block';
+                
+                // Dölj eventuella informationsmeddelanden
+                if (infoContainer) {
+                    infoContainer.style.display = 'none';
+                }
+            }
+            console.error(message);
+            addDebugInfo('FEL: ' + message);
+        }
+        
+        // Visar ett informationsmeddelande
+        function showInfo(message) {
+            if (infoContainer) {
+                infoContainer.textContent = message;
+                infoContainer.style.display = 'block';
+                
+                // Dölj eventuella felmeddelanden
+                if (errorContainer) {
+                    errorContainer.style.display = 'none';
+                }
+            }
+            console.info(message);
+            addDebugInfo('INFO: ' + message);
+        }
+
+        // Initialiserar applikationen
+        async function initializeApp() {
+            try {
+                addDebugInfo("initializeApp startad");
+                
+                // Visa laddningsindikator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'block';
+                }
+                
+                // Hämta alla KPI-grupper
+                addDebugInfo('Hämtar KPI-grupper...');
+                const groupsResponse = await fetch(`${API_BASE_URL}/kpi_groups`);
+                
+                if (!groupsResponse.ok) {
+                    throw new Error(`Fel vid hämtning av KPI-grupper: ${groupsResponse.status}`);
+                }
+                
+                const groupsData = await groupsResponse.json();
+                allKpiGroups = groupsData.values;
+                
+                addDebugInfo(`Hämtade ${allKpiGroups.length} KPI-grupper`);
+                
+                // Hämta alla kommuner
+                addDebugInfo('Hämtar kommuner...');
+                const municipalitiesResponse = await fetch(`${API_BASE_URL}/municipality`);
+                
+                if (!municipalitiesResponse.ok) {
+                    throw new Error(`Fel vid hämtning av kommuner: ${municipalitiesResponse.status}`);
+                }
+                
+                const municipalitiesData = await municipalitiesResponse.json();
+                allMunicipalities = municipalitiesData.values;
+                
+                addDebugInfo(`Hämtade ${allMunicipalities.length} kommuner`);
+                
+                // Populera dropdown-menyer
+                populateKpiGroupsDropdown();
+                populateMunicipalitiesDropdown();
+                
+                // Dölj laddningsindikator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+                
+                addDebugInfo("initializeApp klar");
+                
+                // Visa startmeddelande
+                showInfo("Välj KPI-kategori, nyckeltal, kommun och år - använd sedan 'Förhandsgranska' för att kontrollera om data finns tillgänglig");
+            } catch (error) {
+                showError('Kunde inte initialisera applikationen: ' + error.message);
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            }
+        }
+
+        // Populerar dropdown-menyn med KPI-grupper
+        function populateKpiGroupsDropdown() {
+            addDebugInfo('Populerar KPI-grupper dropdown...');
+            
+            // Filtrera bort grupper utan medlemmar
+            const validGroups = allKpiGroups.filter(function(group) {
+                return group.members && group.members.length > 0;
+            });
+            
+            validGroups.forEach(function(group) {
+                const option = document.createElement('option');
+                option.value = group.id;
+                option.textContent = group.title;
+                kpiTypeSelect.appendChild(option);
+            });
+            
+            addDebugInfo(`Lade till ${validGroups.length} KPI-grupper i dropdown`);
+        }
+
+        // Populerar dropdown-menyn med kommuner
+        function populateMunicipalitiesDropdown() {
+            addDebugInfo('Populerar kommuner dropdown...');
+            
+            // Filtrera för att bara inkludera kommuner (inte regioner)
+            const municipalities = allMunicipalities.filter(function(m) {
+                return m.type === "K";
+            });
+            
+            // Sortera kommuner alfabetiskt
+            municipalities.sort(function(a, b) {
+                return a.title.localeCompare(b.title);
+            });
+            
+            // Lägg till "Hela riket" som ett alternativ först
+            const national = allMunicipalities.find(function(m) {
+                return m.id === "0000";
+            });
+            
+            if (national) {
+                municipalities.unshift(national);
+            }
+            
+            // Lägg till alla kommuner i dropdown-menyn
+            municipalities.forEach(function(municipality) {
+                const option = document.createElement('option');
+                option.value = municipality.id;
+                option.textContent = municipality.title;
+                municipalitySelect.appendChild(option);
+            });
+            
+            addDebugInfo(`Lade till ${municipalities.length} kommuner i dropdown`);
+        }
+
+        // Laddar KPIs baserat på vald KPI-grupp
+        function loadKpisByGroup() {
+            const selectedGroupId = kpiTypeSelect.value;
+            
+            addDebugInfo(`Laddar KPIs för grupp ${selectedGroupId}...`);
+            
+            // Rensa tidigare val
+            kpiSelect.innerHTML = '<option value="">Välj ett nyckeltal</option>';
+            
+            if (!selectedGroupId) {
+                kpiSelect.disabled = true;
+                return;
+            }
+            
+            try {
+                // Hitta den valda gruppen i vår lokala data
+                const selectedGroup = allKpiGroups.find(function(group) {
+                    return group.id === selectedGroupId;
+                });
+                
+                if (!selectedGroup || !selectedGroup.members || selectedGroup.members.length === 0) {
+                    throw new Error('Kunde inte hitta medlemmar för den valda gruppen');
+                }
+                
+                addDebugInfo(`Visar ${selectedGroup.members.length} KPIs för grupp ${selectedGroupId}`);
+                
+                // Populera dropdown med medlemmar direkt från den sparade gruppdatan
+                selectedGroup.members.forEach(function(member) {
+                    const option = document.createElement('option');
+                    option.value = member.member_id;
+                    option.textContent = `${member.member_id} - ${member.member_title}`;
+                    kpiSelect.appendChild(option);
+                });
+                
+                kpiSelect.disabled = false;
+            } catch (error) {
+                showError('Kunde inte ladda nyckeltalen: ' + error.message);
+                kpiSelect.disabled = true;
+            }
+        }
+
+        // Förhandsgranska datatillgänglighet
+        async function previewDataAvailability() {
+            const kpiId = kpiSelect.value;
+            const municipalityId = municipalitySelect.value;
+            const yearsRange = yearsInput.value.trim();
+            
+            // Validera indata
+            if (!kpiId) {
+                showError('Välj ett nyckeltal (KPI) för att förhandsgranska');
+                return;
+            }
+            
+            if (!municipalityId) {
+                showError('Välj en kommun för att förhandsgranska');
+                return;
+            }
+            
+            // Validera och bearbeta årsintervall
+            let years;
+            if (yearsRange.includes('-')) {
+                const yearParts = yearsRange.split('-');
+                const startYear = parseInt(yearParts[0].trim(), 10);
+                const endYear = parseInt(yearParts[1].trim(), 10);
+                
+                if (isNaN(startYear) || isNaN(endYear) || startYear > endYear) {
+                    showError('Ogiltigt årsintervall. Använd formatet YYYY-YYYY');
+                    return;
+                }
+                
+                // Skapa en array med alla år i intervallet
+                const yearArray = [];
+                for (let i = 0; i <= endYear - startYear; i++) {
+                    yearArray.push(startYear + i);
+                }
+                years = yearArray.join(',');
+            } else {
+                // Anta att det är ett enskilt år eller en kommaseparerad lista
+                years = yearsRange;
+            }
+            
+            // Skapa en cache-nyckel
+            const cacheKey = `${kpiId}_${municipalityId}_${years}`;
+            
+            try {
+                // Kontrollera om vi redan har cachad information
+                if (dataAvailabilityCache[cacheKey]) {
+                    const cachedData = dataAvailabilityCache[cacheKey];
+                    showDataPreview(cachedData, kpiId, municipalityId, years);
+                    return;
+                }
+                
+                // Dölj eventuella tidigare meddelanden
+                if (errorContainer) {
+                    errorContainer.style.display = 'none';
+                }
+                if (infoContainer) {
+                    infoContainer.style.display = 'none';
+                }
+                
+                // Visa laddningsindikator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'block';
+                }
+                
+                // Anropa API för att hämta data
+                addDebugInfo(`Förhandsgranskar data: /data/kpi/${kpiId}/municipality/${municipalityId}/year/${years}`);
+                
+                const response = await fetch(`${API_BASE_URL}/data/kpi/${kpiId}/municipality/${municipalityId}/year/${years}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Casha resultatet
+                dataAvailabilityCache[cacheKey] = data;
+                
+                // Visa resultatet
+                showDataPreview(data, kpiId, municipalityId, years);
+                
+                // Dölj laddningsindikator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            } catch (error) {
+                showError('Kunde inte förhandsgranska data: ' + error.message);
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            }
+        }
+        
+        // Visa förhandsgranskning av datatillgänglighet
+        function showDataPreview(data, kpiId, municipalityId, years) {
+            if (!data.values || data.values.length === 0) {
+                showInfo(`?? Inga data hittades för ${kpiId} i ${getMunicipalityName(municipalityId)} för åren ${years}. Prova med andra val.`);
+                return;
+            }
+            
+            // Räkna faktiska datapunkter (inte null/undefined)
+            let actualDataPoints = 0;
+            let totalDataPoints = 0;
+            let yearsWithData = new Set();
+            
+            data.values.forEach(function(item) {
+                totalDataPoints++;
+                const value = item.values[0] && item.values[0].value;
+                if (value !== null && value !== undefined && typeof value === 'number' && !isNaN(value)) {
+                    actualDataPoints++;
+                    yearsWithData.add(item.period);
+                }
+            });
+            
+            // Hämta KPI-titel
+            let kpiTitle = kpiId;
+            for (let i = 0; i < allKpiGroups.length; i++) {
+                const group = allKpiGroups[i];
+                if (group.members) {
+                    const kpiInfo = group.members.find(function(member) {
+                        return member.member_id === kpiId;
+                    });
+                    
+                    if (kpiInfo) {
+                        kpiTitle = kpiInfo.member_title;
+                        break;
+                    }
+                }
+            }
+            
+            if (actualDataPoints > 0) {
+                const yearsWithDataArray = Array.from(yearsWithData).sort();
+                showInfo(`? Hittade ${actualDataPoints} datapunkter för "${kpiTitle}" i ${getMunicipalityName(municipalityId)}. 
+                         År med data: ${yearsWithDataArray.join(', ')}`);
+            } else {
+                showInfo(`?? Inga faktiska värden hittades för "${kpiTitle}" i ${getMunicipalityName(municipalityId)} för åren ${years}. 
+                         API:et returnerar ${totalDataPoints} tomma datapunkter. Prova med andra val.`);
+            }
+        }
+        
+        // Hjälpfunktion för att hämta kommunnamn
+        function getMunicipalityName(municipalityId) {
+            const municipality = allMunicipalities.find(function(m) {
+                return m.id === municipalityId;
+            });
+            return municipality ? municipality.title : municipalityId;
+        }
+
+        // Hämtar vald data från Kolada API
+        async function fetchSelectedData() {
+            addDebugInfo('Hämtar data för valda parametrar...');
+            
+            const kpiId = kpiSelect.value;
+            const municipalityId = municipalitySelect.value;
+            const yearsRange = yearsInput.value.trim();
+            
+            // Validera indata
+            if (!kpiId) {
+                showError('Välj ett nyckeltal (KPI)');
+                return;
+            }
+            
+            if (!municipalityId) {
+                showError('Välj en kommun');
+                return;
+            }
+            
+            // Validera och bearbeta årsintervall
+            let years;
+            if (yearsRange.includes('-')) {
+                const yearParts = yearsRange.split('-');
+                const startYear = parseInt(yearParts[0].trim(), 10);
+                const endYear = parseInt(yearParts[1].trim(), 10);
+                
+                if (isNaN(startYear) || isNaN(endYear) || startYear > endYear) {
+                    showError('Ogiltigt årsintervall. Använd formatet YYYY-YYYY');
+                    return;
+                }
+                
+                // Skapa en array med alla år i intervallet
+                const yearArray = [];
+                for (let i = 0; i <= endYear - startYear; i++) {
+                    yearArray.push(startYear + i);
+                }
+                years = yearArray.join(',');
+            } else {
+                // Anta att det är ett enskilt år eller en kommaseparerad lista
+                years = yearsRange;
+            }
+            
+            // Skapa en cache-nyckel
+            const cacheKey = `${kpiId}_${municipalityId}_${years}`;
+            
+            try {
+                // Dölj eventuella tidigare meddelanden
+                if (errorContainer) {
+                    errorContainer.style.display = 'none';
+                }
+                if (infoContainer) {
+                    infoContainer.style.display = 'none';
+                }
+                
+                // Visa laddningsindikator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'block';
+                }
+                
+                let data;
+                
+                // Kontrollera om vi har data i cachen
+                if (dataAvailabilityCache[cacheKey]) {
+                    data = dataAvailabilityCache[cacheKey];
+                    addDebugInfo('Använder cachad data');
+                } else {
+                    // Anropa API för att hämta data
+                    addDebugInfo(`Anropar API: /data/kpi/${kpiId}/municipality/${municipalityId}/year/${years}`);
+                    
+                    const response = await fetch(`${API_BASE_URL}/data/kpi/${kpiId}/municipality/${municipalityId}/year/${years}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    
+                    data = await response.json();
+                    
+                    // Casha resultatet
+                    dataAvailabilityCache[cacheKey] = data;
+                }
+                
+                addDebugInfo(`Hämtade ${data.values ? data.values.length : 0} datapunkter`);
+                
+                // Visa resultaten
+                displayResults(data, kpiId);
+                
+                // Dölj laddningsindikator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            } catch (error) {
+                showError('Kunde inte hämta data: ' + error.message);
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            }
+        }
+
+        // Visar resultaten i en tabell
+        function displayResults(data, kpiId) {
+            addDebugInfo('Visar resultat...');
+            
+            if (!data.values || data.values.length === 0) {
+                tableContainer.innerHTML = '<p>Inga data hittades för de valda parametrarna.</p>';
+                return;
+            }
+            
+            // Hitta KPI-information för det valda nyckeltalet
+            let selectedKpiInfo = null;
+            
+            // Sök igenom alla grupper och deras medlemmar för att hitta KPI-information
+            for (let i = 0; i < allKpiGroups.length; i++) {
+                const group = allKpiGroups[i];
+                if (group.members) {
+                    const kpiInfo = group.members.find(function(member) {
+                        return member.member_id === kpiId;
+                    });
+                    
+                    if (kpiInfo) {
+                        selectedKpiInfo = kpiInfo;
+                        break;
+                    }
+                }
+            }
+            
+            // Gruppera data efter kommun och år
+            const groupedData = {};
+            const years = new Set();
+            
+            data.values.forEach(function(item) {
+                const municipalityId = item.municipality;
+                const year = item.period;
+                const value = item.values && item.values.length > 0 && item.values[0].value;
+                
+                if (!groupedData[municipalityId]) {
+                    groupedData[municipalityId] = {};
+                }
+                
+                groupedData[municipalityId][year] = value;
+                years.add(year);
+            });
+            
+            // Skapa tabellen
+            const sortedYears = Array.from(years).sort();
+            
+            let tableHtml = '<h3>' + (selectedKpiInfo ? selectedKpiInfo.member_title : kpiId) + '</h3>';
+            tableHtml += '<p><strong>Nyckeltal ID:</strong> ' + kpiId + '</p>';
+            tableHtml += '<table><thead><tr><th>Kommun</th>';
+            
+            // Lägg till år som kolumnrubriker
+            sortedYears.forEach(function(year) {
+                tableHtml += '<th>' + year + '</th>';
+            });
+            
+            tableHtml += '</tr></thead><tbody>';
+            
+            // Lägg till rader för varje kommun
+            Object.keys(groupedData).forEach(function(municipalityId) {
+                const municipality = allMunicipalities.find(function(m) {
+                    return m.id === municipalityId;
+                });
+                const municipalityName = municipality ? municipality.title : municipalityId;
+                
+                tableHtml += '<tr><td>' + municipalityName + '</td>';
+                
+                sortedYears.forEach(function(year) {
+                    const value = groupedData[municipalityId][year];
+                    
+                    // Kontrollera noggrant att värdet är ett nummer innan toFixed anropas
+                    if (value !== null && value !== undefined && typeof value === 'number' && !isNaN(value)) {
+                        tableHtml += '<td>' + value.toFixed(2) + '</td>';
+                    } else {
+                        tableHtml += '<td>-</td>';
+                    }
+                });
+                
+                tableHtml += '</tr>';
+            });
+            
+            tableHtml += '</tbody></table>';
+            
+            tableContainer.innerHTML = tableHtml;
+            addDebugInfo('Resultattabell skapad');
+        }
+
+        // Lägg till händelselyssnare
+        document.addEventListener('DOMContentLoaded', function() {
+            addDebugInfo('DOM laddad, initialiserar applikation...');
+            initializeApp();
+        });
+        
+        // Lyssna på ändringar i KPI-typ dropdown
+        kpiTypeSelect.addEventListener('change', loadKpisByGroup);
+        
+        // Lyssna på klick på förhandsgranskningsknappen
+        previewDataButton.addEventListener('click', previewDataAvailability);
+        
+        // Lyssna på klick på hämta data-knappen
+        fetchDataButton.addEventListener('click', fetchSelectedData);
+        
+        // Visa/dölj felsökningsinformation
+        document.getElementById('toggleDebug').addEventListener('click', function() {
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        // Logga att skriptet har laddats
+        addDebugInfo('Skriptet har laddats');
+    </script>
+</body>
+</html>

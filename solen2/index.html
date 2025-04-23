@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soldata för Svenska Städer</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js bibliotek och adaptrar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <!-- SunCalc bibliotek för solberäkningar -->
+    <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Soldata för Svenska Städer 2024</h1>
+    </header>
+    <main>
+        <section class="charts-container">
+            <div class="chart-wrapper">
+                <h2>Solens Upp- och Nedgång</h2>
+                <canvas id="sunriseSunsetChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Dagslängd</h2>
+                <canvas id="daylengthChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Tidigaste och Senaste Soluppgång</h2>
+                <canvas id="sunriseExtremesChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Tidigaste och Senaste Solnedgång</h2>
+                <canvas id="sunsetExtremesChart"></canvas>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>Data beräknad med SunCalc</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html> 

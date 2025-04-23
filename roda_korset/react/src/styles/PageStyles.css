@@ -1,0 +1,282 @@
+/* 
+ * Gemensamma stilar för alla sidor
+ * Version: 1.3.0
+ * 
+ * Här skedde en uppdatering för att lägga till stilar för admin-controls
+ * och reset-knappen som tillåter återställning av quiz-status.
+ */
+
+.page-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-container h1 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 0.5rem;
+}
+
+.page-container h2 {
+  color: var(--secondary-color);
+  margin: 1.5rem 0 1rem;
+  font-size: 1.5rem;
+}
+
+.page-container h3 {
+  color: var(--dark-gray);
+  margin: 1.2rem 0 0.8rem;
+  font-size: 1.2rem;
+}
+
+.page-container p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.page-container ul, 
+.page-container ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.page-container li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.page-container a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.page-container a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+.page-container blockquote {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--dark-gray);
+}
+
+.page-container code {
+  background-color: var(--light-gray);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.page-container pre {
+  background-color: var(--light-gray);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.page-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5rem auto;
+  border-radius: var(--border-radius-sm);
+}
+
+.page-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.page-container th,
+.page-container td {
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid var(--light-gray);
+}
+
+.page-container th {
+  background-color: var(--light-accent-color);
+  font-weight: 600;
+}
+
+.page-container tr:nth-child(even) {
+  background-color: var(--lightest-gray);
+}
+
+.page-container button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.page-container button:hover {
+  background-color: var(--primary-dark-color);
+}
+
+.page-container .info-box {
+  background-color: var(--light-accent-color);
+  border-left: 4px solid var(--accent-color);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+
+.page-container .warning-box {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+
+.page-container .source-reference {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Stilar för lösningsförslagssidans innehållsexempel */
+.page-container .content-example {
+  background-color: #f9f9f9;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--border-radius-sm);
+  padding: 1.2rem;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.page-container .content-example::before {
+  content: "Exempel";
+  position: absolute;
+  top: -0.7rem;
+  left: 1rem;
+  background-color: white;
+  padding: 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--dark-gray);
+  font-weight: 500;
+}
+
+.page-container .content-example p:last-child {
+  margin-bottom: 0;
+}
+
+/* Admin controls och återställningsknapp */
+.admin-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.5rem 0 2rem;
+  position: relative;
+}
+
+.reset-button {
+  background-color: #6c757d;
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--border-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.reset-button:hover {
+  background-color: #5a6268;
+  opacity: 1;
+}
+
+.reset-button::before {
+  content: "🔄";
+  margin-right: 0.3rem;
+}
+
+/* Stilar för knappar och knappbehållare */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.primary-button {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white !important;
+  text-decoration: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.primary-button:hover {
+  background-color: var(--primary-dark-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  text-decoration: none !important;
+}
+
+.primary-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1.5rem;
+  }
+  
+  .page-container h1 {
+    font-size: 1.8rem;
+  }
+  
+  .page-container h2 {
+    font-size: 1.4rem;
+  }
+  
+  .primary-button {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-container {
+    padding: 1rem;
+  }
+  
+  .page-container h1 {
+    font-size: 1.6rem;
+  }
+  
+  .page-container table {
+    font-size: 0.9rem;
+  }
+  
+  .primary-button {
+    width: 100%;
+    padding: 0.6rem 1rem;
+  }
+} 

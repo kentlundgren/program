@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programväljare - Kent Lundgren</title>
+    <style>
+        /* Enkel och direkt styling som prioriterar iframe-storlek */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        header { background: #1a237e; color: white; padding: 5px; text-align: center; height: 40px; }
+        .controls { background: #e3f2fd; padding: 5px; display: flex; justify-content: space-between; align-items: center; height: 35px; }
+        .nav-btn { background: #1a237e; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        select { padding: 3px; border: 1px solid #1a237e; border-radius: 3px; }
+        .dots { display: flex; justify-content: center; margin: 2px 0; height: 10px; }
+        .dot { width: 6px; height: 6px; background: #bbdefb; border-radius: 50%; margin: 0 3px; cursor: pointer; }
+        .dot.active { background: #1a237e; transform: scale(1.2); }
+        .content { flex: 1; position: relative; overflow: hidden; }
+        .frame-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 0.3s; opacity: 0; visibility: hidden; }
+        .frame-container.active { opacity: 1; visibility: visible; }
+        iframe { width: 100%; height: 100%; border: none; }
+        footer { background: #1a237e; color: white; text-align: center; padding: 3px; height: 25px; font-size: 0.8em; }
+        footer a { color: white; }
+        .spinner { border: 4px solid #e3f2fd; border-top: 4px solid #1a237e; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; position: absolute; top: 50%; left: 50%; margin-top: -15px; margin-left: -15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Programväljare</h1>
+    </header>
+
+    <div class="controls">
+        <button id="prev" class="nav-btn">&larr;</button>
+        <select id="program-select">
+            <option value="0">Biodiversitet och resiliens</option>
+            <option value="1">Kvantfysik</option>
+            <option value="2">Fysik</option>
+            <option value="3">Matematikuppgift (kurvor)</option>
+            <option value="4">Klimatscenarier</option>
+        </select>
+        <button id="next" class="nav-btn">&rarr;</button>
+    </div>
+
+    <div class="dots">
+        <span class="dot active" data-index="0"></span>
+        <span class="dot" data-index="1"></span>
+        <span class="dot" data-index="2"></span>
+        <span class="dot" data-index="3"></span>
+        <span class="dot" data-index="4"></span>
+    </div>
+
+    <div class="content">
+        <div class="frame-container active" data-index="0">
+            <div class="spinner"></div>
+            <iframe src="https://kentlundgren.se/program/testprogram/biodiversitet-resiliens/" onload="this.previousElementSibling.style.display='none'"></iframe>
+        </div>
+        <div class="frame-container" data-index="1">
+            <div class="spinner"></div>
+            <iframe src="https://kentlundgren.se/program/kvantfysik/" onload="this.previousElementSibling.style.display='none'"></iframe>
+        </div>
+        <div class="frame-container" data-index="2">
+            <div class="spinner"></div>
+            <iframe src="https://kentlundgren.se/program/fysik/" onload="this.previousElementSibling.style.display='none'"></iframe>
+        </div>
+        <div class="frame-container" data-index="3">
+            <div class="spinner"></div>
+            <iframe src="https://kentlundgren.se/program/kurvor/" onload="this.previousElementSibling.style.display='none'"></iframe>
+        </div>
+        <div class="frame-container" data-index="4">
+            <div class="spinner"></div>
+            <iframe src="https://kentlundgren.se/program/klimatscenarier/" onload="this.previousElementSibling.style.display='none'"></iframe>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 Kent Lundgren | <a href="index.html">Tillbaka</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentIndex = 0;
+            const containers = document.querySelectorAll('.frame-container');
+            const dots = document.querySelectorAll('.dot');
+            const select = document.getElementById('program-select');
+            
+            // Funktion för att byta program
+            function changeProgram(index) {
+                // Kontrollera att index är inom giltigt intervall
+                if (index < 0) index = containers.length - 1;
+                if (index >= containers.length) index = 0;
+                
+                // Uppdatera aktiv container
+                containers.forEach(container => container.classList.remove('active'));
+                containers[index].classList.add('active');
+                
+                // Uppdatera punkter
+                dots.forEach(dot => dot.classList.remove('active'));
+                dots[index].classList.add('active');
+                
+                // Uppdatera dropdown
+                select.value = index;
+                
+                // Uppdatera sidrubrik
+                const titles = ["Biodiversitet och resiliens", "Kvantfysik", "Fysik", "Matematikuppgift (kurvor)", "Klimatscenarier"];
+                document.title = titles[index] + " - Programväljare";
+                
+                currentIndex = index;
+            }
+            
+            // Navigeringsknappar
+            document.getElementById('prev').addEventListener('click', () => changeProgram(currentIndex - 1));
+            document.getElementById('next').addEventListener('click', () => changeProgram(currentIndex + 1));
+            
+            // Dropdown-väljare
+            select.addEventListener('change', () => changeProgram(parseInt(select.value)));
+            
+            // Punktnavigering
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => changeProgram(parseInt(dot.dataset.index)));
+            });
+            
+            // Tangentbordsnavigering
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowLeft') changeProgram(currentIndex - 1);
+                if (e.key === 'ArrowRight') changeProgram(currentIndex + 1);
+            });
+        });
+    </script>
+</body>
+</html> 

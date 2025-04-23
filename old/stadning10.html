@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering</title>
+    
+    <!-- React 18 från CDN -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .amount-input-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .input-group input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .activity-section {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+        }
+        .activity-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2c5282;
+        }
+        .info-box {
+            background-color: #e7f3fe;
+            border: 1px solid #b6d4fd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #084298;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Städavtalshantering</h1>
+    
+    <!-- React root element -->
+    <div id="root"></div>
+
+    <!-- React komponent och app-logik -->
+    <script type="text/babel">
+        // AmountInput komponent för att hantera års- och månadsbelopp
+        const AmountInput = ({ activity, amounts, onAmountChange }) => {
+            // Funktion för att formatera belopp med tusental-separatorer
+            const formatAmount = (value) => {
+                if (!value) return '';
+                return parseFloat(value).toLocaleString('sv-SE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            };
+
+            // Funktion för att parsa formaterade belopp
+            const parseAmount = (value) => {
+                if (!value) return '';
+                return value.replace(/[^\d,-]/g, '').replace(',', '.');
+            };
+
+            return (
+                <div className="amount-input-container">
+                    <div className="input-group">
+                        <label>Årsbelopp (kr):</label>
+                        <input
+                            type="text"
+                            value={formatAmount(amounts[activity].annual)}
+                            onChange={(e) => {
+                                const value = parseAmount(e.target.value);
+                                onAmountChange(activity, 'annual', value);
+                            }}
+                            placeholder="0,00"
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Månadsbelopp (kr):</label>
+                        <input
+                            type="text"
+                            value={formatAmount(amounts[activity].monthly)}
+                            onChange={(e) => {
+                                const value = parseAmount(e.target.value);
+                                onAmountChange(activity, 'monthly', value);
+                            }}
+                            placeholder="0,00"
+                        />
+                    </div>
+                </div>
+            );
+        };
+
+        // Huvudkomponent
+        const App = () => {
+            const [amounts, setAmounts] = React.useState({
+                '8036': { annual: '', monthly: '' },
+                '8035': { annual: '', monthly: '' },
+                '8032': { annual: '', monthly: '' }
+            });
+
+            // Hantera ändringar i belopp
+            const handleAmountChange = (activity, type, value) => {
+                setAmounts(prev => {
+                    const newAmounts = { ...prev };
+                    newAmounts[activity] = { ...prev[activity] };
+                    
+                    // Konvertera till nummer och hantera tomma strängar
+                    const numValue = value === '' ? '' : parseFloat(value);
+                    
+                    if (type === 'annual') {
+                        newAmounts[activity].annual = value;
+                        newAmounts[activity].monthly = numValue ? (numValue / 12).toString() : '';
+                    } else {
+                        newAmounts[activity].monthly = value;
+                        newAmounts[activity].annual = numValue ? (numValue * 12).toString() : '';
+                    }
+                    
+                    return newAmounts;
+                });
+            };
+
+            return (
+                <div className="container">
+                    <h2>Intäktskontering (Konto 3153)</h2>
+
+                    <div className="activity-section">
+                        <div className="activity-header">Fast intäkt (aktivitet: 8036)</div>
+                        <AmountInput 
+                            activity="8036"
+                            amounts={amounts}
+                            onAmountChange={handleAmountChange}
+                        />
+                    </div>
+
+                    <div className="activity-section">
+                        <div className="activity-header">Fönsterputs (aktivitet: 8035)</div>
+                        <div className="info-box">Default ansvar: 41612</div>
+                        <AmountInput 
+                            activity="8035"
+                            amounts={amounts}
+                            onAmountChange={handleAmountChange}
+                        />
+                    </div>
+
+                    <div className="activity-section">
+                        <div className="activity-header">Storstädning (aktivitet: 8032)</div>
+                        <AmountInput 
+                            activity="8032"
+                            amounts={amounts}
+                            onAmountChange={handleAmountChange}
+                        />
+                    </div>
+                </div>
+            );
+        };
+
+        // Rendera React-appen
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

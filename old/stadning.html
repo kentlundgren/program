@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .example-table, .kontering-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .example-table th, .example-table td,
+        .kontering-table th, .kontering-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .example-table th, .kontering-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .example-table tr:nth-child(even),
+        .kontering-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+        .edit-btn {
+            background-color: #2196F3;
+        }
+        .edit-btn:hover {
+            background-color: #0b7dda;
+        }
+        .export-btn {
+            background-color: #ff9800;
+        }
+        .export-btn:hover {
+            background-color: #e68a00;
+        }
+        .contracts-list {
+            margin-top: 20px;
+        }
+        .contract-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .button-group {
+            margin-top: 10px;
+        }
+        .kontering-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Städavtalshantering</h1>
+
+    <div class="container">
+        <h2>Exempel: Fäladen stödboende/akutboende</h2>
+        <p>Total kostnad: 15 588 kr</p>
+        <div class="table-container">
+            <table class="example-table">
+                <thead>
+                    <tr>
+                        <th>Rad</th>
+                        <th>Konto</th>
+                        <th>Ansvar</th>
+                        <th>Verksamhet</th>
+                        <th>Aktivitet</th>
+                        <th>Motpart</th>
+                        <th>Objekt</th>
+                        <th>Belopp</th>
+                        <th>Text</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>6132</td>
+                        <td>70322</td>
+                        <td>5520</td>
+                        <td>7600</td>
+                        <td>180</td>
+                        <td>8964</td>
+                        <td>15 588</td>
+                        <td>Fäladen stödboende/akutboende</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>3153</td>
+                        <td>41612</td>
+                        <td>9347</td>
+                        <td>8032</td>
+                        <td>170</td>
+                        <td>8964</td>
+                        <td>-2 420</td>
+                        <td>Fäladen stödboende/akutboende</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>3153</td>
+                        <td>41612</td>
+                        <td>9347</td>
+                        <td>8035</td>
+                        <td>170</td>
+                        <td>8964</td>
+                        <td>-359</td>
+                        <td>Fäladen stödboende/akutboende</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>3153</td>
+                        <td>41632</td>
+                        <td>9349</td>
+                        <td>8036</td>
+                        <td>170</td>
+                        <td>8964</td>
+                        <td>-12 809</td>
+                        <td>Fäladen stödboende/akutboende</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p><strong>Förklaring av aktiviteter:</strong></p>
+        <ul>
+            <li>8036 - Fast kostnad: 12 809 kr</li>
+            <li>8035 - Fönsterputs: 359 kr</li>
+            <li>8032 - Storstädning: 2 420 kr</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>Lägg till nytt städavtal</h2>
+        <form id="contractForm">
+            <div class="form-group">
+                <label for="contractName">Avtalsnamn:</label>
+                <input type="text" id="contractName" required>
+            </div>
+            <div class="form-group">
+                <label for="totalAmount">Totalbelopp (kr):</label>
+                <input type="number" id="totalAmount" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="amount8036">Fast kostnad (8036):</label>
+                <input type="number" id="amount8036" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="amount8035">Fönsterputs (8035):</label>
+                <input type="number" id="amount8035" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="amount8032">Storstädning (8032):</label>
+                <input type="number" id="amount8032" step="0.01" required>
+            </div>
+            <button type="submit">Lägg till avtal</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Befintliga städavtal</h2>
+        <div id="contractsList" class="contracts-list">
+            <!-- Här kommer avtalen att listas dynamiskt -->
+        </div>
+    </div>
+
+    <script>
+        // Array för att lagra alla städavtal
+        let contracts = [];
+        let editingId = null;
+
+        // Funktion för att generera konteringsrader
+        function generateKontering(contract) {
+            let rows = [];
+            let rowNumber = 1;
+
+            // Intäktsrad
+            rows.push({
+                rad: rowNumber++,
+                konto: '6132',
+                ansvar: '70322',
+                verksamhet: '5520',
+                aktivitet: '7600',
+                motpart: '180',
+                objekt: '8964',
+                belopp: contract.totalAmount,
+                text: contract.name
+            });
+
+            // Kostnadsrader för varje aktivitet
+            if (contract.activities['8032'] > 0) {
+                rows.push({
+                    rad: rowNumber++,
+                    konto: '3153',
+                    ansvar: '41612',
+                    verksamhet: '9347',
+                    aktivitet: '8032',
+                    motpart: '170',
+                    objekt: '8964',
+                    belopp: -contract.activities['8032'],
+                    text: contract.name
+                });
+            }
+
+            if (contract.activities['8035'] > 0) {
+                rows.push({
+                    rad: rowNumber++,
+                    konto: '3153',
+                    ansvar: '41612',
+                    verksamhet: '9347',
+                    aktivitet: '8035',
+                    motpart: '170',
+                    objekt: '8964',
+                    belopp: -contract.activities['8035'],
+                    text: contract.name
+                });
+            }
+
+            if (contract.activities['8036'] > 0) {
+                rows.push({
+                    rad: rowNumber++,
+                    konto: '3153',
+                    ansvar: '41632',
+                    verksamhet: '9349',
+                    aktivitet: '8036',
+                    motpart: '170',
+                    objekt: '8964',
+                    belopp: -contract.activities['8036'],
+                    text: contract.name
+                });
+            }
+
+            return rows;
+        }
+
+        // Funktion för att exportera till Excel
+        function exportToExcel() {
+            let exportData = [];
+            
+            // Lägg till konteringsrader för varje avtal
+            contracts.forEach(contract => {
+                const rows = generateKontering(contract);
+                exportData = exportData.concat(rows);
+            });
+
+            // Skapa arbetsboken
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Konteringar");
+
+            // Spara filen
+            XLSX.writeFile(wb, "stadavtal_konteringar.xlsx");
+        }
+
+        // Funktion för att redigera avtal
+        function editContract(id) {
+            const contract = contracts.find(c => c.id === id);
+            if (!contract) return;
+
+            editingId = id;
+            document.getElementById('contractName').value = contract.name;
+            document.getElementById('totalAmount').value = contract.totalAmount;
+            document.getElementById('amount8036').value = contract.activities['8036'];
+            document.getElementById('amount8035').value = contract.activities['8035'];
+            document.getElementById('amount8032').value = contract.activities['8032'];
+
+            // Ändra submit-knappen
+            document.querySelector('button[type="submit"]').textContent = 'Uppdatera avtal';
+        }
+
+        // Funktion för att ta bort avtal
+        function deleteContract(id) {
+            if (confirm('Är du säker på att du vill ta bort detta avtal?')) {
+                contracts = contracts.filter(c => c.id !== id);
+                updateContractsList();
+            }
+        }
+
+        // Uppdaterad formulärhantering
+        document.getElementById('contractForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const amount8036 = parseFloat(document.getElementById('amount8036').value);
+            const amount8035 = parseFloat(document.getElementById('amount8035').value);
+            const amount8032 = parseFloat(document.getElementById('amount8032').value);
+            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+
+            // Validering
+            const sum = amount8036 + amount8035 + amount8032;
+            if (Math.abs(sum - totalAmount) > 0.01) {
+                alert('Summan av aktiviteterna måste stämma överens med totalbeloppet!');
+                return;
+            }
+
+            const contractData = {
+                name: document.getElementById('contractName').value,
+                totalAmount: totalAmount,
+                activities: {
+                    '8036': amount8036,
+                    '8035': amount8035,
+                    '8032': amount8032
+                }
+            };
+
+            if (editingId) {
+                // Uppdatera befintligt avtal
+                const index = contracts.findIndex(c => c.id === editingId);
+                contractData.id = editingId;
+                contracts[index] = contractData;
+                editingId = null;
+                document.querySelector('button[type="submit"]').textContent = 'Lägg till avtal';
+            } else {
+                // Lägg till nytt avtal
+                contractData.id = Date.now();
+                contracts.push(contractData);
+            }
+
+            updateContractsList();
+            this.reset();
+        });
+
+        // Uppdaterad funktion för att visa avtalslistan
+        function updateContractsList() {
+            const contractsList = document.getElementById('contractsList');
+            contractsList.innerHTML = '';
+
+            contracts.forEach(contract => {
+                const contractElement = document.createElement('div');
+                contractElement.className = 'contract-item';
+                
+                // Grundinformation om avtalet
+                contractElement.innerHTML = `
+                    <h3>${contract.name}</h3>
+                    <p>Totalbelopp: ${contract.totalAmount.toFixed(2)} kr</p>
+                    <p>Fast kostnad (8036): ${contract.activities['8036'].toFixed(2)} kr</p>
+                    <p>Fönsterputs (8035): ${contract.activities['8035'].toFixed(2)} kr</p>
+                    <p>Storstädning (8032): ${contract.activities['8032'].toFixed(2)} kr</p>
+                    
+                    <div class="button-group">
+                        <button class="edit-btn" onclick="editContract(${contract.id})">Redigera</button>
+                        <button class="delete-btn" onclick="deleteContract(${contract.id})">Ta bort</button>
+                    </div>
+
+                    <div class="kontering-section">
+                        <h4>Konteringsrader:</h4>
+                        <div class="table-container">
+                            <table class="kontering-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rad</th>
+                                        <th>Konto</th>
+                                        <th>Ansvar</th>
+                                        <th>Verksamhet</th>
+                                        <th>Aktivitet</th>
+                                        <th>Motpart</th>
+                                        <th>Objekt</th>
+                                        <th>Belopp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${generateKontering(contract).map(row => `
+                                        <tr>
+                                            <td>${row.rad}</td>
+                                            <td>${row.konto}</td>
+                                            <td>${row.ansvar}</td>
+                                            <td>${row.verksamhet}</td>
+                                            <td>${row.aktivitet}</td>
+                                            <td>${row.motpart}</td>
+                                            <td>${row.objekt}</td>
+                                            <td>${row.belopp.toFixed(2)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                
+                contractsList.appendChild(contractElement);
+            });
+
+            if (contracts.length === 0) {
+                contractsList.innerHTML = '<p>Inga städavtal tillagda ännu.</p>';
+            } else {
+                // Lägg till exportknapp om det finns avtal
+                const exportButton = document.createElement('button');
+                exportButton.className = 'export-btn';
+                exportButton.textContent = 'Exportera till Excel';
+                exportButton.onclick = exportToExcel;
+                contractsList.insertBefore(exportButton, contractsList.firstChild);
+            }
+        }
+
+        // Initiera listan
+        updateContractsList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+ <!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering</title>
+
+    <!-- React 18 och tillhörande bibliotek från CDN -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    
+    <!-- Excel-hantering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Länka till den externa CSS-filen -->
+    <link rel="stylesheet" href="styles2.css">
+</head>
+<body>
+    <h1>Städavtalshantering</h1>
+
+    <div class="container">
+        <div class="info-box">
+            <h3>Viktig information:</h3>
+            <ul>
+                <li>Standardperiod för all kontering är 202501</li>   
+                <li>Intäktskonto 3153 används som standard</li>
+                <li>Kostnadskonto 6132 används som standard (undantagsvis har konto 6133, 6460 eller 7460 använts)</li>
+                <li>För ändring av period då bokföringen ska ske, och ändring av konton, gör manuell justering i exporterad Excel-fil</li>
+            </ul>
+        </div>
+
+        <!-- Exempelsektion -->
+        <h2>Exempel på månadskontering för olika typer av städavtal</h2>
+        
+        <!-- Typ 2a exempel -->
+        <div class="example-container">
+            <h3>Typ 2a: Samma objektkod för både kontering av intäkter och kostnader</h3>
+            <p>Exempel: Fäladen stödboende/akutboende (Objektkod: 8964)</p>
+            <p>Total kostnad: 15 588 kr</p>
+            <div class="table-container">
+                <table class="kontering-table">
+                    <!-- [Detaljerad tabell för Typ 2a-exempel] -->
+                </table>
+            </div>
+        </div>
+        
+        <!-- Formulärsektion -->
+        <h2 class="section-header">Registrera nytt städavtal</h2>
+        
+        <!-- React-komponent för beloppshantering -->
+        <div id="amountCalculator"></div>
+
+        <form id="contractForm">
+            <!-- Grundinformation -->
+            <div class="form-group">
+                <label for="contractName">Avtalsnamn (den text som står sist i konteringssträngen, i "text-fältet"):</label>
+                <input type="text" id="contractName" required>
+            </div>
+
+            <!-- Kostnadssektion -->
+            <div class="cost-section">
+                <h3>Kostnadskontering (Konto 6132)</h3>
+                <div class="form-row">
+                    <div class="form-column">
+                        <label for="costAnsvar">Ansvar för kostnad:</label>
+                        <input type="text" id="costAnsvar" required>
+                    </div>
+                    <div class="form-column">
+                        <label for="costVerksamhet">Verksamhet för kostnad:</label>
+                        <input type="text" id="costVerksamhet" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objektkodshantering -->
+            <div class="form-group">
+                <label for="objectCodeType">Typ av objektkodshantering:</label>
+                <select id="objectCodeType" required>
+                    <option value="">Välj typ...</option>
+                    <option value="2a">2a - Samma objektkod för både kontering av intäkter och kostnader</option>
+                    <option value="2b">2b - Utan objektkod</option>
+                    <option value="2c">2c - Objektkod endast på intäkter</option>
+                    <option value="2d">2d - Objektkod endast på kostnader</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="objectCodeSection" style="display: none;">
+                <label for="objectCode">Objektkod:</label>
+                <input type="text" id="objectCode">
+            </div>
+
+            <!-- Motpartsval -->
+            <div class="form-group">
+                <label for="motpart">Välj motpart för intäkter:</label>
+                <select id="motpart" required>
+                    <option value="">Välj motpart...</option>
+                    <option value="120">120 - UTBildning</option>
+                    <option value="130">130 - OMSorg</option>
+                    <option value="150">150 - Stadsledningsförvaltning</option>
+                    <option value="162">162 - Kulturförvaltningen</option>
+                    <option value="170">170 - Individ och familjeförvaltningen</option>
+                    <option value="180">180 - Teknik och Fritid</option>
+                </select>
+            </div>
+
+            <button type="submit">Lägg till avtal</button>
+        </form>
+    </div>
+
+    <!-- Befintliga städavtal -->
+    <div class="container">
+        <h2 class="section-header">Befintliga städavtal</h2>
+        <div id="contractsList"></div>
+    </div>
+
+    <!-- React-komponenter och logik -->
+    <script type="text/babel">
+        // AmountInput komponent för enskilda beloppspar
+        const AmountInput = ({ activity, label, amounts, onAmountChange }) => {
+            const formatAmount = (value) => {
+                if (!value) return '';
+                const numValue = typeof value === 'string' ? parseFloat(value.replace(/\s/g, '')) : value;
+                if (isNaN(numValue)) return '';
+                return numValue.toLocaleString('sv-SE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            };
+
+            const parseAmount = (value) => {
+                const cleanValue = value.replace(/[^\d,.]/g, '').replace(',', '.');
+                const number = parseFloat(cleanValue);
+                return isNaN(number) ? '' : number.toString();
+            };
+
+            return (
+                <div className="activity-section">
+                    <div className="activity-header">
+                        <h3>{label}</h3>
+                        <span className="monthly-badge">Månadsbelopp används för kontering</span>
+                    </div>
+                    <div className="amount-container">
+                        <div className="amount-input-group">
+                            <label>Årsbelopp (kr):</label>
+                            <input
+                                type="text"
+                                value={formatAmount(amounts[activity].annual)}
+                                onChange={(e) => {
+                                    const rawValue = e.target.value;
+                                    const parsedValue = parseAmount(rawValue);
+                                    onAmountChange(activity, 'annual', parsedValue);
+                                }}
+                                placeholder="0,00"
+                            />
+                            <div className="calculation-info">
+                                Månadsbelopp = Årsbelopp ÷ 12
+                            </div>
+                        </div>
+                        <div className="amount-input-group">
+                            <label>Månadsbelopp (kr):</label>
+                            <input
+                                type="text"
+                                value={formatAmount(amounts[activity].monthly)}
+                                onChange={(e) => {
+                                    const rawValue = e.target.value;
+                                    const parsedValue = parseAmount(rawValue);
+                                    onAmountChange(activity, 'monthly', parsedValue);
+                                }}
+                                placeholder="0,00"
+                            />
+                            <div className="calculation-info">
+                                Årsbelopp = Månadsbelopp × 12
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Huvudkomponent för beloppshantering
+        const AmountCalculator = () => {
+            const [amounts, setAmounts] = React.useState({
+                '8036': { annual: '', monthly: '' },
+                '8035': { annual: '', monthly: '' },
+                '8032': { annual: '', monthly: '' }
+            });
+
+            const handleAmountChange = (activity, type, value) => {
+                setAmounts(prev => {
+                    const newAmounts = { ...prev };
+                    newAmounts[activity] = { ...prev[activity] };
+                    
+                    const numValue = value === '' ? '' : parseFloat(value);
+                    
+                    if (type === 'annual') {
+                        newAmounts[activity].annual = value;
+                        newAmounts[activity].monthly = numValue ? (numValue / 12).toFixed(2) : '';
+                    } else {
+                        newAmounts[activity].monthly = value;
+                        newAmounts[activity].annual = numValue ? (numValue * 12).toFixed(2) : '';
+                    }
+                    
+                    // Uppdatera dolda fält för kontering
+                    const hiddenInput = document.getElementById(`amount${activity}`);
+                    if (hiddenInput) {
+                        hiddenInput.value = newAmounts[activity].monthly;
+                        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    
+                    return newAmounts;
+                });
+            };
+
+            return (
+                <div>
+                    <div className="important-note">
+                        OBS! Det är månadsbeloppet som används som underlag för konteringen varje månad.
+                    </div>
+                    
+                    <AmountInput
+                        activity="8036"
+                        label="Fast intäkt (aktivitet: 8036)"
+                        amounts={amounts}
+                        onAmountChange={handleAmountChange}
+                    />
+                    
+                    <AmountInput
+                        activity="8035"
+                        label="Fönsterputs (aktivitet: 8035)"
+                        amounts={amounts}
+                        onAmountChange={handleAmountChange}
+                    />
+                    
+                    <AmountInput
+                        activity="8032"
+                        label="Storstädning (aktivitet: 8032)"
+                        amounts={amounts}
+                        onAmountChange={handleAmountChange}
+                    />
+                </div>
+            );
+        };
+
+        // Rendera React-appen
+        const root = ReactDOM.createRoot(document.getElementById('amountCalculator'));
+        root.render(<AmountCalculator />);
+    </script>
+
+    <!-- Hantering av kontering och Excel-export -->
+    <script>
+        // Globala variabler
+        let contracts = [];
+        let editingId = null;
+
+        // [Fortsättning följer med JavaScript för kontering och Excel-export]
+    </script>
+</body>
+</html>

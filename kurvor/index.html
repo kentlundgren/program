@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funktionsuppgift</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <h1>Funktionsuppgift</h1>
+            <button id="infoBtn" class="info-btn">Om programmet</button>
+        </div>
+        
+        <!-- Modal för att visa information -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Funktionsuppgift - Interaktiv lösning</h2>
+                <div id="readmeContent">
+                    <p>Detta är en interaktiv webbapplikation för att lära sig om olika funktionstyper genom en matematisk uppgift. Appen låter användaren utforska hur linjära, kvadratiska och exponentiella funktioner med samma skärningspunkter kan ha olika beteenden.</p>
+                    
+                    <h3>Funktioner</h3>
+                    <ul>
+                        <li>Växla mellan flikar för uppgift, tips, quiz, diagram och lösning</li>
+                        <li>Pedagogiskt upplägg där användaren först får tänka själv med hjälp av tips</li>
+                        <li>Quiz med flervalsfrågor som måste besvaras korrekt för att låsa upp lösningen</li>
+                        <li>Grafisk visualisering av funktionerna i ett interaktivt diagram</li>
+                        <li>Fullständig lösning med steg-för-steg förklaringar</li>
+                    </ul>
+                    
+                    <h3>Filstruktur</h3>
+                    <ul>
+                        <li><code>index.html</code> - Webbapplikationens huvudfil med HTML-struktur</li>
+                        <li><code>styles.css</code> - Stilmallar för applikationen</li>
+                        <li><code>script.js</code> - JavaScript-funktionalitet för flikar, quiz och diagrammet</li>
+                        <li><code>uppgift.jpg</code> - Bild på uppgiften (behöver läggas till)</li>
+                    </ul>
+                    
+                    <h3>Hur man använder applikationen</h3>
+                    <ol>
+                        <li>Öppna <code>index.html</code> i en webbläsare</li>
+                        <li>Läs uppgiften i uppgiftsfliken</li>
+                        <li>Använd tips-fliken om du behöver hjälp</li>
+                        <li>Besvara quizfrågorna - alla tre måste vara rätt för att låsa upp lösningen</li>
+                        <li>Utforska diagrammet för att se hur funktionerna beter sig</li>
+                        <li>När quizet är avklarat, se den fullständiga lösningen</li>
+                    </ol>
+                    
+                    <h3>Tekniska detaljer</h3>
+                    <ul>
+                        <li>Använder Chart.js för att rita diagrammet</li>
+                        <li>Responsiv design som fungerar på olika skärmstorlekar</li>
+                        <li>Separerar HTML, CSS och JavaScript i olika filer för bättre struktur</li>
+                    </ul>
+                    
+                    <h3>Uppdatering från ursprungliga kurvor.html</h3>
+                    <p>Denna applikation är en uppdatering av den ursprungliga kurvor.html. Följande förbättringar har gjorts:</p>
+                    <ul>
+                        <li>Koden har delats upp i separata HTML, CSS och JavaScript-filer</li>
+                        <li>Ett pedagogiskt flöde har lagts till med uppgift, tips och quiz</li>
+                        <li>Lösningen är låst tills användaren visar förståelse genom att klara quizet</li>
+                        <li>Förbättrad design och användargränssnitt med tydliga flikar</li>
+                        <li>Tydliga kommentarer i koden förklarar funktionaliteten</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigationsflikar -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="uppgift">Uppgift</button>
+            <button class="tab-btn" data-tab="tips">Tips</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+            <button class="tab-btn" data-tab="diagram" id="diagram-tab">Diagram</button>
+            <button class="tab-btn" data-tab="losning" id="losning-tab" disabled>Lösning</button>
+        </div>
+        
+        <!-- Innehållssektioner -->
+        <div class="tab-content">
+            <!-- Uppgiftssektionen -->
+            <div class="tab-pane active" id="uppgift">
+                <h2>Uppgift 3564</h2>
+                <div class="task-description">
+                    <p>För en funktion gäller att f(0) = 4 och f(3) = 8.</p>
+                    <p>Bestäm f(2) och svara exakt om funktionen f är:</p>
+                    <p>a) f(x) = kx + m</p>
+                    <p>b) f(x) = ax² + b</p>
+                    <p>c) f(x) = C · aˣ</p>
+                </div>
+                <div class="task-image-container">
+                    <!-- Om uppgift.jpg finns tillgänglig, använd det -->
+                    <img id="task-image" src="uppgift.jpg" alt="Uppgiftsbild" class="task-image" onerror="this.onerror=null; this.style.display='none'; document.getElementById('image-fallback').style.display='block';">
+                    <!-- Fallback om bilden inte kan laddas -->
+                    <div id="image-fallback" class="image-fallback" style="display: none;">
+                        <p>För att se bilden av uppgiften, lägg till en fil med namnet "uppgift.jpg" i samma mapp.</p>
+                        <p>Bilden bör visa uppgiften såsom den visas i läroboken.</p>
+                    </div>
+                </div>
+                <div class="note">
+                    <p><strong>Notera:</strong> Denna uppgift handlar om att bestämma värdet f(2) för tre olika funktionstyper 
+                    som alla passerar genom punkterna (0,4) och (3,8). Du behöver först bestämma konstanterna i 
+                    funktionerna genom att använda de givna punkterna.</p>
+                </div>
+            </div>
+            
+            <!-- Tipssektionen -->
+            <div class="tab-pane" id="tips">
+                <h2>Hur man löser uppgiften</h2>
+                <p>För att lösa denna uppgift behöver du:</p>
+                <ol>
+                    <li>För varje funktionstyp, sätt in de kända punkterna (0,4) och (3,8) för att bestämma konstanterna.</li>
+                    <li>För den linjära funktionen a): 
+                        <ul>
+                            <li>Sätt in x=0: f(0) = k·0 + m = 4 ger m = 4</li>
+                            <li>Sätt in x=3: f(3) = k·3 + m = 8 ger k·3 + 4 = 8 vilket ger k = 4/3</li>
+                        </ul>
+                    </li>
+                    <li>För andragradsfunktionen b):
+                        <ul>
+                            <li>Sätt in x=0: f(0) = a·0² + b = 4 ger b = 4</li>
+                            <li>Sätt in x=3: f(3) = a·3² + b = 8 ger a·9 + 4 = 8 vilket ger a = 4/9</li>
+                        </ul>
+                    </li>
+                    <li>För exponentialfunktionen c):
+                        <ul>
+                            <li>Sätt in x=0: f(0) = C·a⁰ = C·1 = 4 ger C = 4</li>
+                            <li>Sätt in x=3: f(3) = C·a³ = 4·a³ = 8 ger a³ = 2 vilket ger a = ∛2</li>
+                        </ul>
+                    </li>
+                    <li>När du hittat alla konstanter, sätt in x=2 i varje funktion för att beräkna f(2).</li>
+                </ol>
+            </div>
+            
+            <!-- Quizsektionen -->
+            <div class="tab-pane" id="quiz">
+                <h2>Quiz</h2>
+                <p>Besvara alla frågor rätt för att låsa upp lösningen.</p>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <p>1. Vilket värde har konstanten m i den linjära funktionen f(x) = kx + m?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q1" value="a"> a) 0</label>
+                            <label><input type="radio" name="q1" value="b"> b) 4/3</label>
+                            <label><input type="radio" name="q1" value="c"> c) 4</label>
+                            <label><input type="radio" name="q1" value="d"> d) 8</label>
+                        </div>
+                        <p class="feedback" id="feedback-q1"></p>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <p>2. Vad är värdet på a i andragradsfunktionen f(x) = ax² + b?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q2" value="a"> a) 4/9</label>
+                            <label><input type="radio" name="q2" value="b"> b) 4</label>
+                            <label><input type="radio" name="q2" value="c"> c) 2</label>
+                            <label><input type="radio" name="q2" value="d"> d) 9/4</label>
+                        </div>
+                        <p class="feedback" id="feedback-q2"></p>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <p>3. Vilket värde har exponenten a i exponentialfunktionen f(x) = C · aˣ?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q3" value="a"> a) 2</label>
+                            <label><input type="radio" name="q3" value="b"> b) 4</label>
+                            <label><input type="radio" name="q3" value="c"> c) ∛2 (≈ 1,2599)</label>
+                            <label><input type="radio" name="q3" value="d"> d) 2/3</label>
+                        </div>
+                        <p class="feedback" id="feedback-q3"></p>
+                    </div>
+                    
+                    <button id="check-answers">Kontrollera svar</button>
+                </div>
+            </div>
+            
+            <!-- Diagramsektionen -->
+            <div class="tab-pane" id="diagram">
+                <h2>Diagram över funktionerna</h2>
+                <div class="info-box">
+                    <p>Diagrammet visar de tre funktionerna som alla passerar genom punkterna (0,4) och (3,8).</p>
+                    <p>Notera hur funktionerna har olika beteenden trots att de delar dessa två punkter:</p>
+                    <ul>
+                        <li>Den linjära funktionen (röd) växer med konstant hastighet.</li>
+                        <li>Andragradsfunktionen (blå) växer allt snabbare när x ökar.</li>
+                        <li>Exponentialfunktionen (grön) växer långsamt i början men ökar sedan mycket snabbt.</li>
+                    </ul>
+                    <p>Detta illustrerar en viktig matematisk insikt: Att ha några gemensamma punkter innebär inte att funktionerna beter sig lika överallt.</p>
+                </div>
+                
+                <div class="chart-wrapper">
+                    <canvas id="myChart" width="800" height="400"></canvas>
+                    <button id="visaDiagram" class="btn">Visa diagram</button>
+                    <p class="chart-info">Om diagrammet inte visas automatiskt, klicka på knappen ovan.</p>
+                </div>
+                
+                <div class="diagram-highlight">
+                    <p>Se speciellt på värdena vid x = 2 för att jämföra de tre funktionernas värden där.</p>
+                </div>
+                
+                <div class="important-points">
+                    <h3>Viktiga punkter:</h3>
+                    <ul>
+                        <li><strong>f(0) = 4</strong> för alla tre funktioner (en av våra givna villkor)</li>
+                        <li><strong>f(3) = 8</strong> för alla tre funktioner (en av våra givna villkor)</li>
+                        <li><strong>f(2)</strong> varierar mellan funktionerna:
+                            <ul>
+                                <li>Linjär: f(2) = 20/3 ≈ 6,67</li>
+                                <li>Kvadratisk: f(2) = 52/9 ≈ 5,78</li>
+                                <li>Exponentiell: f(2) = 4·∛2² ≈ 6,35</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Lösningssektionen -->
+            <div class="tab-pane" id="losning">
+                <h2>Lösning</h2>
+                
+                <div class="results">
+                    <h3>Värdet av f(2) för de tre funktionerna:</h3>
+                    
+                    <h4>a) Linjär funktion: f(x) = kx + m</h4>
+                    <p>f(0) = k·0 + m = 4 ger m = 4</p>
+                    <p>f(3) = k·3 + m = 8 ger k·3 + 4 = 8 vilket ger k = 4/3</p>
+                    <p>f(2) = (4/3)·2 + 4 = 8/3 + 4 = 8/3 + 12/3 = 20/3 ≈ 6,67</p>
+                    
+                    <h4>b) Andragradsfunktion: f(x) = ax² + b</h4>
+                    <p>f(0) = a·0² + b = 4 ger b = 4</p>
+                    <p>f(3) = a·3² + b = 8 ger a·9 + 4 = 8 vilket ger a = 4/9</p>
+                    <p>f(2) = (4/9)·2² + 4 = (4/9)·4 + 4 = 16/9 + 4 = 16/9 + 36/9 = 52/9 ≈ 5,78</p>
+                    
+                    <h4>c) Exponentialfunktion: f(x) = C · aˣ</h4>
+                    <p>f(0) = C·a⁰ = C·1 = 4 ger C = 4</p>
+                    <p>f(3) = C·a³ = 4·a³ = 8 ger a³ = 2 vilket ger a = ∛2 ≈ 1,2599</p>
+                    <p>f(2) = 4·(∛2)² = 4·∛2²</p>
+                    <p>Eftersom ∛2³ = 2 är ∛2² = 2^(2/3) ≈ 1,5874</p>
+                    <p>Därför är f(2) = 4·1,5874 = 6,3496</p>
+                    
+                    <h3>Exakta svar:</h3>
+                    <p>a) f(2) = 20/3</p>
+                    <p>b) f(2) = 52/9</p>
+                    <p>c) f(2) = 4·∛2²</p>
+                </div>
+                
+                <div class="parameters">
+                    <h3>Beräknade parametrar:</h3>
+                    <div id="parameters"></div>
+                </div>
+                
+                <div class="conclusion">
+                    <h3>Slutsats:</h3>
+                    <p>Denna uppgift visar att även om funktioner passar genom samma punkter,
+                    kan de ha olika beteenden och värden på andra ställen. De tre funktionerna
+                    går alla genom (0,4) och (3,8), men ger olika värden för f(2).</p>
+                    <p>Detta illustrerar vikten av att förstå vilken typ av funktion som bäst
+                    beskriver ett fenomen, eftersom val av modell påverkar prediktioner.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

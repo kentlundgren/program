@@ -1,0 +1,320 @@
+/* ===============================
+   STYLES33.CSS
+   Stilmall för städavtalshantering
+   Version 33
+   =============================== */
+
+/* ==== 1. VARIABLER OCH GRUNDINSTÄLLNINGAR ==== */
+:root {
+    /* Färgpalett */
+    --primary-color: #4CAF50;
+    --primary-dark: #388E3C;
+    --primary-light: #C8E6C9;
+    --secondary-color: #2196F3;
+    --warning-color: #FFA000;
+    --error-color: #D32F2F;
+    --success-color: #388E3C;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --background-primary: #ffffff;
+    --background-secondary: #f5f5f5;
+    --border-color: #E0E0E0;
+    --overlay-color: rgba(0, 0, 0, 0.5);
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Typografi */
+    --font-family-base: Arial, sans-serif;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+
+    /* Layout */
+    /* NYTT: Uppdaterade layoutvariabler */
+    --page-max-width: 1200px;
+    --content-max-width: 800px;
+    --border-radius: 4px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Reset och grundläggande stilar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* UPPDATERAD: Body styling */
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--background-secondary);
+    /* NYTT: Förbättrad layout för body */
+    max-width: var(--page-max-width);
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+    min-height: 100vh;
+}
+
+/* UPPDATERAD: Container styling */
+.container {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* UPPDATERAD: Header styling */
+header {
+    max-width: var(--content-max-width);
+    margin: 0 auto var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background-color: var(--background-primary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    text-align: center;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+/* UPPDATERAD: Navigation styling */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.nav-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: var(--primary-light);
+}
+
+/* UPPDATERAD: Informationssektion */
+.info-section {
+    max-width: var(--content-max-width);
+    margin: 0 auto var(--spacing-xl);
+}
+
+.info-box {
+    background-color: var(--primary-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--primary-color);
+}
+
+/* UPPDATERAD: Formulärsektion */
+.form-section {
+    max-width: var(--content-max-width);
+    margin: 0 auto var(--spacing-xl);
+    background-color: var(--background-primary);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* UPPDATERAD: Form layout */
+.form-row {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.form-column {
+    flex: 1;
+    min-width: 0; /* Förhindra overflow */
+}
+
+/* UPPDATERAD: Input styling */
+label {
+    display: block;
+    font-weight: bold;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* UPPDATERAD: Select styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 32px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* UPPDATERAD: Aktivitetssektion */
+.activity-section {
+    background-color: var(--background-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* UPPDATERAD: Knappdesign */
+.button {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-button {
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.submit-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.reset-button {
+    background-color: var(--text-secondary);
+    color: white;
+    width: 100%;
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+.reset-button:hover {
+    background-color: var(--text-primary);
+}
+
+/* UPPDATERAD: Hjälptext */
+.help-text {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+/* UPPDATERAD: Validering och felhantering */
+.invalid {
+    border-color: var(--error-color);
+    background-color: rgba(211, 47, 47, 0.05);
+}
+
+.warning {
+    border-color: var(--warning-color);
+    background-color: rgba(255, 160, 0, 0.05);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+}
+
+/* UPPDATERAD: Responsiv design */
+@media (max-width: 1024px) {
+    :root {
+        --content-max-width: 90vw;
+    }
+    
+    .form-section {
+        padding: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: var(--spacing-md);
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    header {
+        padding: var(--spacing-md);
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: var(--spacing-sm);
+    }
+
+    .form-section {
+        padding: var(--spacing-md);
+    }
+
+    .activity-section {
+        padding: var(--spacing-md);
+    }
+}
+
+/* UPPDATERAD: Hjälpklasser */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mt-4 { margin-top: var(--spacing-xl); }
+
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+.mb-4 { margin-bottom: var(--spacing-xl); }
+
+.hidden { display: none !important; }
+.invisible { visibility: hidden !important; }
+
+/* ==================== SLUT PÅ styles33.css ==================== */

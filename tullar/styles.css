@@ -1,0 +1,187 @@
+/* Grundläggande reset och box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Header styling */
+header {
+    background-color: #003366;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 0.5rem;
+}
+
+/* Main content layout */
+main {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+}
+
+/* Left panel - Instructions */
+.left-panel {
+    background-color: #e6f2ff;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.instruction-panel h2 {
+    color: #003366;
+    margin-bottom: 0.5rem;
+}
+
+#stats-content {
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+/* Map container */
+.map-container {
+    flex: 2;
+    position: relative;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+.map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.map-controls button {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.map-controls button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Right panel - Results */
+.right-panel {
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+/* Info panel */
+#info-panel {
+    padding: 1rem;
+}
+
+#info-panel h2 {
+    margin-bottom: 1rem;
+    color: #003366;
+}
+
+#tull-details {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Relation details styling */
+.relation-details {
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+
+/* Tulltabell styling */
+.tull-tabell {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.tull-tabell th, .tull-tabell td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tull-tabell th {
+    background-color: #003366;
+    color: white;
+    font-weight: bold;
+}
+
+.tull-tabell tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.tull-tabell tr:hover {
+    background-color: #e9ecef;
+}
+
+.tull-tabell td:nth-child(2), .tull-tabell td:nth-child(3) {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Relation beskrivning */
+.relation-beskrivning {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    font-style: italic;
+}
+
+/* Footer styling */
+footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+    main {
+        flex-direction: row;
+    }
+
+    .left-panel {
+        flex: 0 0 250px;
+        border-bottom: none;
+        border-right: 1px solid #ddd;
+    }
+
+    .map-container {
+        flex: 2;
+    }
+
+    .right-panel {
+        flex: 1;
+        max-width: 400px;
+        border-top: none;
+        border-left: 1px solid #ddd;
+    }
+} 

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering</title>
+
+    <!-- React 18 och tillhörande bibliotek -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    
+    <!-- Excel-hantering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Länka till den externa CSS-filen -->
+    <link rel="stylesheet" href="styles2.css">
+</head>
+<body>
+    <h1>Städavtalshantering</h1>
+
+    <div class="container">
+        <div class="info-box">
+            <h3>Viktig information:</h3>
+            <ul>
+                <li>Standardperiod för all kontering är 202501</li>   
+                <li>Intäktskonto 3153 används som standard</li>
+                <li>Kostnadskonto 6132 används som standard (undantagsvis har konto 6133, 6460 eller 7460 använts)</li>
+                <li>För ändring av period då bokföringen ska ske, och ändring av konton, gör manuell justering i exporterad Excel-fil</li>
+            </ul>
+        </div>
+
+        <!-- ====== PLATS FÖR EXEMPEL 2a, 2b, 2c, och 2d ====== -->
+        <!-- Sätt in de fyra exemplen här från original-programmet -->
+        <!-- ================================================== -->    
+        
+         <!--    <h2 class="section-header">Exempel på kontering för olika typer av städavtal</h2>  -->
+        
+        <!-- Typ 2a exempel -->     
+        
+        
+    <!-- Exempelsektion -->
+    <div class="container">
+        <h2>Exempel på månadskontering för olika typer av städavtal - med olika användning av objektkod</h2>
+        
+        <!-- Typ 2a exempel -->
+        <div class="example-container">
+            <h3>Typ 2a: Samma objektkod för både kontering av intäkter och kostnader (Fäladen stödboende/akutboende)</h3>
+            <p>Total kostnad: 15 588 kr | Objektkod: 8964</p>
+            <div class="table-container">
+                <table class="kontering-table">
+                    <thead>
+                        <tr>
+                            <th>Rad</th>
+                            <th>Konto</th>
+                            <th>Ansvar</th>
+                            <th>Verksamhet</th>
+                            <th>Aktivitet</th>
+                            <th>Motpart</th>
+                            <th>Objekt</th>
+                            <th>Belopp</th>
+                            <th>Text</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>6132</td>
+                            <td>70322</td>
+                            <td>5520</td>
+                            <td>7600</td>
+                            <td>180</td>
+                            <td>8964</td>
+                            <td>15 588</td>
+                            <td>Fäladen stödboende/akutboende</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>3153</td>
+                            <td>41612</td>
+                            <td>9347</td>
+                            <td>8032</td>
+                            <td>170</td>
+                            <td>8964</td>
+                            <td>-2 420</td>
+                            <td>Fäladen stödboende/akutboende - storstädning</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>3153</td>
+                            <td>41612</td>
+                            <td>9347</td>
+                            <td>8035</td>
+                            <td>170</td>
+                            <td>8964</td>
+                            <td>-359</td>
+                            <td>Fäladen stödboende/akutboende - fönsterputs</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>3153</td>
+                            <td>41632</td>
+                            <td>9349</td>
+                            <td>8036</td>
+                            <td>170</td>
+                            <td>8964</td>
+                            <td>-12 809</td>
+                            <td>Fäladen stödboende/akutboende - fast intäkt</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Förklaring av aktiviteter -->
+        <div class="example-container">
+            <h3>Förklaring av aktiviteter</h3>
+            <ul>
+                <li><strong>8036 - Fast kostnad/intäkt:</strong> Ordinarie städning enligt avtal - kodas ofta med verksamhet 9349</li>
+                <li><strong>8035 - Fönsterputs:</strong> Specialtjänst för fönsterputsning - utförs ofta av Site 1:2, ansvar 41612, verksamhet 9347</li>
+                <li><strong>8032 - Storstädning:</strong> Extra grundlig städning enligt överenskommelse - kodas ofta med verksamhet 9349</li>
+            </ul>
+        </div>
+    </div>
+        
+   <!--     <div class="example-container">
+            <h3>Typ 2a: Samma objektkod för hela avtalet</h3>
+            <p>Exempel: Fäladen stödboende/akutboende (Objektkod: 8964)</p>
+            <div class="table-container">
+                [Konteringstabell för Fäladen med alla 17 kolumner]
+            </div>
+        </div>    -->
+                        
+ <!-- Typ 2b exempel -->
+<div class="example-container">
+    <h3>Typ 2b: Utan objektkod</h3>
+    <p>Exempel: Borstahusen bod/fikarum/omklädningsrum</p>
+    <p>Total kostnad: 1 998 kr</p>
+    <div class="table-container">
+        <table class="kontering-table">
+            <thead>
+                <tr>
+                    <th>Rad</th>
+                    <th>Konto</th>
+                    <th>Ansvar</th>
+                    <th>Verksamhet</th>
+                    <th>Aktivitet</th>
+                    <th>Motpart</th>
+                    <th>Objekt</th>
+                    <th>Belopp</th>
+                    <th>Text</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>6132</td>
+                    <td>80350</td>
+                    <td>3405</td>
+                    <td>8105</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>1 821</td>
+                    <td>Borstahusen bod/fikarum/omklädningsrum</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>3153</td>
+                    <td>41621</td>
+                    <td>9347</td>
+                    <td>8036</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>-1 821</td>
+                    <td>Borstahusen bod/fikarum/omklädningsrum - fast intäkt</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>6132</td>
+                    <td>80350</td>
+                    <td>3405</td>
+                    <td>8105</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>151</td>
+                    <td>Borstahusen bod/fikarum/omklädningsrum</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>3153</td>
+                    <td>41612</td>
+                    <td>9347</td>
+                    <td>8032</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>-151</td>
+                    <td>Borstahusen bod/fikarum/omklädningsrum - storstädning</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>6132</td>
+                    <td>80350</td>
+                    <td>3405</td>
+                    <td>8105</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>26</td>
+                    <td>Borstahusen bod/fikarum/omklädningsrum</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>3153</td>
+                    <td>41612</td>
+                    <td>9347</td>
+                    <td>8035</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>-26</td>
+                    <td>Borstahusen bod/fikarum/omklädningsrum - fönsterputs</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Typ 2c exempel -->
+<div class="example-container">
+    <h3>Typ 2c: Objektkod endast på intäkter</h3>
+    <p>Exempel: Tellus idrottsvägen 16 (Objektkod 8948 på intäkter)</p>
+    <p>Total kostnad: 14 958 kr</p>
+    <div class="table-container">
+        <table class="kontering-table">
+            <thead>
+                <tr>
+                    <th>Rad</th>
+                    <th>Konto</th>
+                    <th>Ansvar</th>
+                    <th>Verksamhet</th>
+                    <th>Aktivitet</th>
+                    <th>Motpart</th>
+                    <th>Objekt</th>
+                    <th>Belopp</th>
+                    <th>Text</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>6132</td>
+                    <td>70232</td>
+                    <td>5686</td>
+                    <td>7600</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>12 815</td>
+                    <td>Tellus idrottsvägen 16</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>3153</td>
+                    <td>41622</td>
+                    <td>9349</td>
+                    <td>8036</td>
+                    <td>170</td>
+                    <td>8948</td>
+                    <td>-12 815</td>
+                    <td>Tellus idrottsvägen 16 - fast intäkt</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>6132</td>
+                    <td>70232</td>
+                    <td>5686</td>
+                    <td>7600</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>1 684</td>
+                    <td>Tellus idrottsvägen 16</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>3153</td>
+                    <td>41612</td>
+                    <td>9347</td>
+                    <td>8032</td>
+                    <td>170</td>
+                    <td>8948</td>
+                    <td>-1 684</td>
+                    <td>Tellus idrottsvägen 16 - storstädning</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>6132</td>
+                    <td>70232</td>
+                    <td>5686</td>
+                    <td>7600</td>
+                    <td>180</td>
+                    <td></td>
+                    <td>459</td>
+                    <td>Tellus idrottsvägen 16</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>3153</td>
+                    <td>41612</td>
+                    <td>9347</td>
+                    <td>8035</td>
+                    <td>170</td>
+                    <td>8948</td>
+                    <td>-459</td>
+                    <td>Tellus idrottsvägen 16 - fönsterputs </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Typ 2d exempel -->
+<div class="example-container">
+    <h3>Typ 2d: Objektkod endast på kostnader</h3>
+    <p>Exempel: Emaljgatan våning 3, IT (Objektkod 5736 på kostnader)</p>
+    <p>Total kostnad: 21 614 kr</p>
+    <div class="table-container">
+        <table class="kontering-table">
+            <thead>
+                <tr>
+                    <th>Rad</th>
+                    <th>Konto</th>
+                    <th>Ansvar</th>
+                    <th>Verksamhet</th>
+                    <th>Aktivitet</th>
+                    <th>Motpart</th>
+                    <th>Objekt</th>
+                    <th>Belopp</th>
+                    <th>Text</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>6132</td>
+                    <td>51300</td>
+                    <td>9275</td>
+                    <td>5030</td>
+                    <td>180</td>
+                    <td>5736</td>
+                    <td>21 614</td>
+                    <td>Emaljgatan våning 3, IT</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>3153</td>
+                    <td>41611</td>
+                    <td>9349</td>
+                    <td>8036</td>
+                    <td>150</td>
+                    <td></td>
+                    <td>-20 385</td>
+                    <td>Emaljgatan våning 3, IT - fast intäkt</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>3153</td>
+                    <td>41612</td>
+                    <td>9347</td>
+                    <td>8035</td>
+                    <td>150</td>
+                    <td></td>
+                    <td>-1 229</td>
+                    <td>Emaljgatan våning 3, IT - fönsterputs</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>       
+        
+        
+        
+        
+
+        <!-- Formulärsektion -->
+        <h2 class="section-header">Registrera nytt städavtal</h2>
+        
+        <!-- React-komponent för beloppshantering -->
+        <div id="amountCalculator"></div>
+
+        <form id="contractForm">
+            <!-- Grundinformation -->
+            <div class="form-group">
+                <label for="contractName">Avtalsnamn (den text som står sist i konteringssträngen, i "text-fältet"):</label>
+                <input type="text" id="contractName" required>
+            </div>
+
+            <!-- Kostnadssektion -->
+            <div class="cost-section">
+                <h3>Kostnadskontering (Konto 6132)</h3>
+                <div class="form-row">
+                    <div class="form-column">
+                        <label for="costAnsvar">Ansvar för kostnad:</label>
+                        <input type="text" id="costAnsvar" required>
+                    </div>
+                    <div class="form-column">
+                        <label for="costVerksamhet">Verksamhet för kostnad:</label>
+                        <input type="text" id="costVerksamhet" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objektkodshantering -->
+            <div class="form-group">
+                <label for="objectCodeType">Typ av objektkodshantering:</label>
+                <select id="objectCodeType" required>
+                    <option value="">Välj typ...</option>
+                    <option value="2a">2a - Samma objektkod för både kontering av intäkter och kostnader</option>
+                    <option value="2b">2b - Utan objektkod</option>
+                    <option value="2c">2c - Objektkod endast på intäkter</option>
+                    <option value="2d">2d - Objektkod endast på kostnader</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="objectCodeSection" style="display: none;">
+                <label for="objectCode">Objektkod:</label>
+                <input type="text" id="objectCode">
+            </div>
+
+            <!-- Motpartsval -->
+            <div class="form-group">
+                <label for="motpart">Välj motpart för intäkter:</label>
+                <select id="motpart" required>
+                    <option value="">Välj motpart...</option>
+                    <option value="120">120 - UTBildning</option>
+                    <option value="130">130 - OMSorg</option>
+                    <option value="150">150 - Stadsledningsförvaltning</option>
+                    <option value="162">162 - Kulturförvaltningen</option>
+                    <option value="170">170 - Individ och familjeförvaltningen</option>
+                    <option value="180">180 - Teknik och Fritid</option>
+                </select>
+            </div>
+
+            <button type="submit">Lägg till avtal</button>
+        </form>
+    </div>
+
+    <!-- Befintliga städavtal -->
+    <div class="container">
+        <h2 class="section-header">Befintliga städavtal</h2>
+        <div id="contractsList"></div>
+    </div>
+
+    <!-- React-komponenter -->
+    <script type="text/babel">
+        const AmountInput = ({ activity, label, amounts, onAmountChange }) => {
+            // Formatera belopp för visning (med tusental-separator och decimaler)
+            const formatDisplayValue = (value) => {
+                if (!value) return '';
+                const number = parseFloat(value);
+                if (isNaN(number)) return '';
+                return number.toLocaleString('sv-SE', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            };
+
+            // Hantera input och ta bort formatering
+            const handleInputChange = (e, type) => {
+                // Ta bort alla tecken utom siffror, komma och punkt
+                let rawValue = e.target.value.replace(/[^\d.,]/g, '');
+                // Ersätt komma med punkt för beräkning
+                const numericValue = rawValue.replace(',', '.');
+                const parsedValue = parseFloat(numericValue);
+                
+                if (rawValue === '' || isNaN(parsedValue)) {
+                    onAmountChange(activity, type, '');
+                } else {
+                    onAmountChange(activity, type, parsedValue.toString());
+                }
+            };
+
+            return (
+                <div className="activity-section">
+                    <div className="activity-header">
+                        <h3>{label}</h3>
+                        <span className="monthly-badge">Månadsbelopp används för kontering</span>
+                    </div>
+                    <div className="amount-container">
+                        <div className="amount-input-group">
+                            <label>Årsbelopp (kr):</label>
+                            <input
+                                type="text"
+                                value={formatDisplayValue(amounts[activity].annual)}
+                                onChange={(e) => handleInputChange(e, 'annual')}
+                                placeholder="0,00"
+                            />
+                            <div className="calculation-info">
+                                Månadsbelopp = Årsbelopp ÷ 12
+                            </div>
+                        </div>
+                        <div className="amount-input-group">
+                            <label>Månadsbelopp (kr):</label>
+                            <input
+                                type="text"
+                                value={formatDisplayValue(amounts[activity].monthly)}
+                                onChange={(e) => handleInputChange(e, 'monthly')}
+                                placeholder="0,00"
+                            />
+                            <div className="calculation-info">
+                                Årsbelopp = Månadsbelopp × 12
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const AmountCalculator = () => {
+            const [amounts, setAmounts] = React.useState({
+                '8036': { annual: '', monthly: '' },
+                '8035': { annual: '', monthly: '' },
+                '8032': { annual: '', monthly: '' }
+            });
+
+            const handleAmountChange = (activity, type, value) => {
+                setAmounts(prev => {
+                    const newAmounts = { ...prev };
+                    newAmounts[activity] = { ...prev[activity] };
+                    
+                    const numValue = value === '' ? '' : parseFloat(value);
+                    
+                    if (type === 'annual') {
+                        newAmounts[activity].annual = value;
+                        newAmounts[activity].monthly = numValue ? (numValue / 12).toFixed(2) : '';
+                    } else {
+                        newAmounts[activity].monthly = value;
+                        newAmounts[activity].annual = numValue ? (numValue * 12).toFixed(2) : '';
+                    }
+                    
+                    // Uppdatera dolda fält för kontering
+                    const hiddenInput = document.getElementById(`amount${activity}`);
+                    if (hiddenInput) {
+                        hiddenInput.value = newAmounts[activity].monthly;
+                        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    
+                    return newAmounts;
+                });
+            };
+
+            return (
+                <div>
+                    <div className="important-note">
+                        OBS! Det är månadsbeloppet som används som underlag för konteringen varje månad.
+                    </div>
+                    
+                    <AmountInput
+                        activity="8036"
+                        label="Fast intäkt (aktivitet: 8036)"
+                        amounts={amounts}
+                        onAmountChange={handleAmountChange}
+                    />
+                    
+                    <AmountInput
+                        activity="8035"
+                        label="Fönsterputs (aktivitet: 8035)"
+                        amounts={amounts}
+                        onAmountChange={handleAmountChange}
+                    />
+                    
+                    <AmountInput
+                        activity="8032"
+                        label="Storstädning (aktivitet: 8032)"
+                        amounts={amounts}
+                        onAmountChange={handleAmountChange}
+                    />
+                </div>
+            );
+        };
+
+        // Rendera React-appen
+        const root = ReactDOM.createRoot(document.getElementById('amountCalculator'));
+        root.render(<AmountCalculator />);
+    </script>
+
+    <!-- Hantering av kontering och Excel-export -->
+    <script>
+        // Globala variabler
+        let contracts = [];
+        let editingId = null;
+
+        // Funktion för att generera komplett konteringsrad
+        function createFullKonteringsRow(data) {
+            return {
+                rad: data.rad || '',
+                konto: data.konto || '',
+                ansvar: data.ansvar || '',
+                verksamhet: data.verksamhet || '',
+                aktivitet: data.aktivitet || '',
+                motpart: data.motpart || '',
+                objekt: data.objekt || '',
+                belopp: data.belopp || 0,
+                text: data.text || ''
+            };
+        }
+
+        // Visa/dölj objektkodsfält
+        document.getElementById('objectCodeType').addEventListener('change', function() {
+            const objectCodeSection = document.getElementById('objectCodeSection');
+            const objectCodeInput = document.getElementById('objectCode');
+
+            if (this.value === '2b') {
+                objectCodeSection.style.display = 'none';
+                objectCodeInput.required = false;
+            } else {
+                objectCodeSection.style.display = 'block';
+                objectCodeInput.required = true;
+            }
+        });
+
+        // Export till Excel
+        function exportToExcel() {
+            let exportData = [];
+            
+            contracts.forEach(contract => {
+                const rows = generateKontering(contract);
+                exportData = exportData.concat(rows);
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Konteringar");
+            XLSX.writeFile(wb, "stadavtal_konteringar.xlsx");
+        }
+
+        // Formulärhantering
+        document.getElementById('contractForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const contractData = {
+                name: document.getElementById('contractName').value,
+                objectCodeType: document.getElementById('objectCodeType').value,
+                objectCode: document.getElementById('objectCode')?.value,
+                costAnsvar: document.getElementById('costAnsvar').value,
+                costVerksamhet: document.getElementById('costVerksamhet').value,
+                motpart: document.getElementById('motpart').value,
+                activities: {
+                    '8036': { monthly: parseFloat(document.getElementById('amount8036').value) || 0 },
+                    '8035': { monthly: parseFloat(document.getElementById('amount8035').value) || 0 },
+                    '8032': { monthly: parseFloat(document.getElementById('amount8032').value) || 0 }
+                }
+            };
+
+            if (editingId) {
+                const index = contracts.findIndex(c => c.id === editingId);
+                contractData.id = editingId;
+                contracts[index] = contractData;
+                editingId = null;
+                this.querySelector('button[type="submit"]').textContent = 'Lägg till avtal';
+            } else {
+                contractData.id = Date.now();
+                contracts.push(contractData);
+            }
+
+            updateContractsList();
+            this.reset();
+
+            // Återställ React-komponenten
+            root.render(<AmountCalculator />);
+        });
+
+        // Uppdatera konteringslistan
+        function updateContractsList() {
+            const contractsList = document.getElementById('contractsList');
+            contractsList.innerHTML = '';
+
+            if (contracts.length > 0) {
+                const exportButton = document.createElement('button');
+                exportButton.textContent = 'Exportera till Excel';
+                exportButton.onclick = exportToExcel;
+                contractsList.appendChild(exportButton);
+
+                contracts.forEach(contract => {
+                    const contractElement = document.createElement('div');
+                    contractElement.className = 'contract-item';
+                    contractElement.innerHTML = `
+                        <h3>${contract.name}</h3>
+                        <button onclick="if(confirm('Är du säker?')) { 
+                            contracts = contracts.filter(c => c.id !== ${contract.id}); 
+                            updateContractsList(); 
+                        }">Ta bort</button>
+                    `;
+                    contractsList.appendChild(contractElement);
+                });
+            } else {
+                contractsList.innerHTML = '<p>Inga städavtal tillagda ännu.</p>';
+            }
+        }
+
+        // Initiera listan
+        updateContractsList();  
+        
+        // här bröts programmet...
+        
+        
+        // Generera konteringsrader
+        function generateKontering(contract) {
+            let rows = [];
+            let rowNumber = 1;
+
+            // Beräkna totalt månadsbelopp
+            const totalAmount = Object.values(contract.activities)
+                .reduce((sum, activity) => sum + (activity.monthly || 0), 0);
+
+            // Kostnadsrad
+            const costRow = createFullKonteringsRow({
+                rad: rowNumber++,
+                konto: '6132',
+                ansvar: contract.costAnsvar,
+                verksamhet: contract.costVerksamhet,
+                aktivitet: '7600',
+                motpart: '180',
+                objekt: (contract.objectCodeType === '2a' || contract.objectCodeType === '2d') ? contract.objectCode : '',
+                belopp: totalAmount,
+                text: contract.name
+            });
+            rows.push(costRow);
+
+            // Intäktsrader för varje aktivitet
+            const activities = [
+                {
+                    code: '8036',
+                    amount: contract.activities['8036'].monthly,
+                    verksamhet: '9349',
+                    text: ' - fast intäkt'
+                },
+                {
+                    code: '8035',
+                    amount: contract.activities['8035'].monthly,
+                    verksamhet: '9347',
+                    text: ' - fönsterputs'
+                },
+                {
+                    code: '8032',
+                    amount: contract.activities['8032'].monthly,
+                    verksamhet: '9349',
+                    text: ' - storstädning'
+                }
+            ];
+
+            activities.forEach(activity => {
+                if (activity.amount > 0) {
+                    const incomeRow = createFullKonteringsRow({
+                        rad: rowNumber++,
+                        konto: '3153',
+                        ansvar: document.getElementById(`ansvar${activity.code}`)?.value,
+                        verksamhet: activity.verksamhet,
+                        aktivitet: activity.code,
+                        motpart: contract.motpart,
+                        objekt: (contract.objectCodeType === '2a' || contract.objectCodeType === '2c') ? contract.objectCode : '',
+                        belopp: -activity.amount,
+                        text: contract.name + activity.text
+                    });
+                    rows.push(incomeRow);
+                }
+            });
+
+            return rows;
+        }
+
+        // Uppdatera konteringslistan med detaljerad visning
+        function updateContractsList() {
+            const contractsList = document.getElementById('contractsList');
+            contractsList.innerHTML = '';
+
+            if (contracts.length > 0) {
+                const exportButton = document.createElement('button');
+                exportButton.textContent = 'Exportera till Excel';
+                exportButton.onclick = exportToExcel;
+                contractsList.appendChild(exportButton);
+
+                contracts.forEach(contract => {
+                    const contractElement = document.createElement('div');
+                    contractElement.className = 'contract-item';
+                    
+                    const konteringsRader = generateKontering(contract);
+                    
+                    contractElement.innerHTML = `
+                        <h3>${contract.name}</h3>
+                        <div class="table-container">
+                            <table class="kontering-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rad</th>
+                                        <th>Konto</th>
+                                        <th>Ansvar</th>
+                                        <th>Verksamhet</th>
+                                        <th>Aktivitet</th>
+                                        <th>Motpart</th>
+                                        <th>Objekt</th>
+                                        <th>Belopp</th>
+                                        <th>Text</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${konteringsRader.map(row => `
+                                        <tr>
+                                            <td>${row.rad}</td>
+                                            <td>${row.konto}</td>
+                                            <td>${row.ansvar}</td>
+                                            <td>${row.verksamhet}</td>
+                                            <td>${row.aktivitet}</td>
+                                            <td>${row.motpart}</td>
+                                            <td>${row.objekt}</td>
+                                            <td>${row.belopp.toFixed(2)}</td>
+                                            <td>${row.text}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button onclick="if(confirm('Är du säker?')) { 
+                            contracts = contracts.filter(c => c.id !== ${contract.id}); 
+                            updateContractsList(); 
+                        }">Ta bort</button>
+                    `;
+                    
+                    contractsList.appendChild(contractElement);
+                });
+            } else {
+                contractsList.innerHTML = '<p>Inga städavtal tillagda ännu.</p>';
+            }
+        }
+
+        // Initiera listan
+        updateContractsList();
+    </script>
+</body>
+</html>

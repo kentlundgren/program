@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolada API Data</title>
+    <!-- Länk till CSS-fil -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Lägg till lite inline CSS för felsökningsvisning -->
+    <style>
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .debug-toggle {
+            text-align: right;
+            margin: 10px 0;
+        }
+        #errorContainer {
+            color: #dc3545;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kolada API Datahämtning</h1>
+        <p>Använd formuläret nedan för att söka och hämta data från Kolada API.</p>
+        
+        <!-- Felmeddelande container -->
+        <div id="errorContainer"></div>
+        
+        <div class="form-group">
+            <label for="kpiType">Välj KPI-kategori:</label>
+            <select id="kpiType">
+                <option value="">Välj en kategori</option>
+                <!-- Kategorierna kommer att laddas dynamiskt via JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="kpi">Välj nyckeltal (KPI):</label>
+            <select id="kpi" disabled>
+                <option value="">Välj först en kategori</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="municipality">Välj kommun:</label>
+            <select id="municipality">
+                <option value="">Välj en kommun</option>
+                <!-- Kommunerna kommer att laddas dynamiskt via JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="years">Ange år (t.ex. 2020-2023):</label>
+            <input type="text" id="years" placeholder="2020-2023" value="2020-2023">
+        </div>
+        
+        <button id="fetchData">Hämta data</button>
+        
+        <div id="loading" class="loading">
+            Hämtar data, var god vänta...
+        </div>
+        
+        <div id="results">
+            <h2>Resultat</h2>
+            <div id="tableContainer"></div>
+        </div>
+        
+        <!-- Felsökningsinformation -->
+        <div class="debug-toggle">
+            <button id="toggleDebug">Visa/dölj felsökningsinformation</button>
+        </div>
+        <div id="debugInfo" class="debug-info" style="display: none;"></div>
+    </div>
+
+    <!-- Länk till JavaScript-filer -->
+    <script>
+        // Hjälpfunktion för att samla in felsökningsinformation
+        window.debugLog = function(message) {
+            console.log(message);
+            const debugInfo = document.getElementById('debugInfo');
+            if (debugInfo) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugInfo.textContent += `[${timestamp}] ${message}\n`;
+            }
+        };
+
+        // Kontrollera om alla script laddas korrekt
+        window.addEventListener('error', function(event) {
+            window.debugLog(`Fel vid laddning av script: ${event.message}`);
+            document.getElementById('errorContainer').textContent = 
+                `Ett fel uppstod: ${event.message}. Kontrollera att alla JavaScript-filer har laddats korrekt.`;
+            document.getElementById('errorContainer').style.display = 'block';
+        });
+
+        // Visa/dölj felsökningsinformation
+        document.getElementById('toggleDebug').addEventListener('click', function() {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+        });
+
+        window.debugLog('HTML-dokument laddat');
+    </script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Kontrollera om alla nödvändiga skript har laddats korrekt
+        window.addEventListener('load', function() {
+            window.debugLog('Alla resurser har laddats');
+            
+            if (typeof initializeApp !== 'function') {
+                window.debugLog('VARNING: initializeApp-funktionen hittades inte. Kontrollera att app.js har laddats korrekt.');
+                document.getElementById('errorContainer').textContent = 
+                    'app.js har inte laddats korrekt. Kontrollera att filen finns och att sökvägen är korrekt.';
+                document.getElementById('errorContainer').style.display = 'block';
+            }
+            
+            if (typeof fetchKpiGroups !== 'function') {
+                window.debugLog('VARNING: fetchKpiGroups-funktionen hittades inte. Kontrollera att api.js har laddats korrekt.');
+                document.getElementById('errorContainer').textContent = 
+                    'api.js har inte laddats korrekt. Kontrollera att filen finns och att sökvägen är korrekt.';
+                document.getElementById('errorContainer').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Städavtalshantering</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Städavtalshantering</h1>
+  
+  <form id="stadavtalForm">
+    <!-- Konto -->
+    <label for="konto">Konto:</label>
+    <input type="text" id="konto" name="konto" value="6132" required />
+
+    <!-- Ansvar -->
+    <label for="ansvar">Ansvar:</label>
+    <input type="text" id="ansvar" name="ansvar" required />
+
+    <!-- Projekt (tom) -->
+    <input type="hidden" id="projekt" name="projekt" value="" />
+
+    <!-- Anl (tom) -->
+    <input type="hidden" id="anl" name="anl" value="" />
+
+    <!-- Verksamhet -->
+    <label for="verksamhet">Verksamhet:</label>
+    <input type="text" id="verksamhet" name="verksamhet" required />
+
+    <!-- Aktivitet -->
+    <label for="aktivitet">Aktivitet (8036 / 8035 / 8032):</label>
+    <select id="aktivitet" name="aktivitet" required>
+      <option value="8036">8036 - Fast kostnad/intäkt</option>
+      <option value="8035">8035 - Fönsterputs</option>
+      <option value="8032">8032 - Storstädning</option>
+    </select>
+
+    <!-- Motpart -->
+    <label for="motpart">Motpart:</label>
+    <input type="text" id="motpart" name="motpart" />
+
+    <!-- Objekt/Frikod -->
+    <label for="objekt">Objekt/Frikod:</label>
+    <input type="text" id="objekt" name="objekt" />
+
+    <!-- MK (tom) -->
+    <input type="hidden" id="mk" name="mk" value="" />
+
+    <!-- MS (tom) -->
+    <input type="hidden" id="ms" name="ms" value="" />
+
+    <!-- Period (YYYYMM) -->
+    <label for="period">Period (2025):</label>
+    <input type="text" id="period" name="period" placeholder="202501" pattern="^2025(0[1-9]|1[0-2])$" required />
+
+    <!-- Periodiseringsnyckel (tom) -->
+    <input type="hidden" id="perNyckel" name="perNyckel" value="" />
+
+    <!-- Val.belopp -->
+    <label for="valBelopp">Val.belopp:</label>
+    <input type="number" step="0.01" id="valBelopp" name="valBelopp" required />
+
+    <!-- Valuta (tom) -->
+    <input type="hidden" id="valuta" name="valuta" value="" />
+
+    <!-- Belopp -->
+    <label for="belopp">Belopp:</label>
+    <input type="number" step="0.01" id="belopp" name="belopp" required />
+
+    <!-- Text -->
+    <label for="text">Text (t.ex. ”Fäladen stödboende”):</label>
+    <input type="text" id="text" name="text" required />
+
+    <button type="submit">Lägg till rad</button>
+  </form>
+
+  <table id="previewTable">
+    <thead>
+      <tr>
+        <th>Rad</th>
+        <th>Konto</th>
+        <th>Ansvar</th>
+        <th>Projekt</th>
+        <th>Anl</th>
+        <th>Verksamhet</th>
+        <th>Aktivitet</th>
+        <th>Motpart</th>
+        <th>Objekt</th>
+        <th>MK</th>
+        <th>MS</th>
+        <th>Period</th>
+        <th>Period.nyckel</th>
+        <th>Val.belopp</th>
+        <th>Valuta</th>
+        <th>Belopp</th>
+        <th>Text</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dynamiskt skapade rader hamnar här -->
+    </tbody>
+  </table>
+
+  <button id="exportBtn">Exportera till Excel</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

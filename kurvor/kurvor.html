@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funktionsdiagram</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            width: 800px;
+            margin: 0 auto;
+        }
+        .results {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diagram över de tre funktionerna</h1>
+        
+        <div class="results">
+            <h3>Funktionernas värden:</h3>
+            <p>a) f(x) = kx + m</p>
+            <p>b) f(x) = ax² + b</p>
+            <p>c) f(x) = C · aˣ</p>
+            <p>Beräknade parametrar:</p>
+            <div id="parameters"></div>
+        </div>
+        
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        // Beräkna parametrarna för de tre funktionerna baserat på f(0) = 4 och f(3) = 8
+        
+        // a) Linjär funktion: f(x) = kx + m
+        // f(0) = k*0 + m = 4 => m = 4
+        // f(3) = k*3 + m = 8 => k*3 + 4 = 8 => k*3 = 4 => k = 4/3
+        const k = 4/3;
+        const m = 4;
+        
+        // b) Andragradsfunktion: f(x) = ax² + b
+        // f(0) = a*0² + b = 4 => b = 4
+        // f(3) = a*3² + b = 8 => a*9 + 4 = 8 => a*9 = 4 => a = 4/9
+        const a = 4/9;
+        const b = 4;
+        
+        // c) Exponentialfunktion: f(x) = C · aˣ
+        // f(0) = C · a⁰ = C · 1 = C = 4
+        // f(3) = C · a³ = 4 · a³ = 8 => a³ = 2 => a = ∛2 ≈ 1.2599
+        const C = 4;
+        const exp_a = Math.pow(2, 1/3); // ∛2
+        
+        // Visa parametervärden på sidan
+        document.getElementById('parameters').innerHTML = `
+            <p>Linjär funktion (a): k = ${k.toFixed(4)}, m = ${m.toFixed(4)}</p>
+            <p>Andragradsfunktion (b): a = ${a.toFixed(4)}, b = ${b.toFixed(4)}</p>
+            <p>Exponentialfunktion (c): C = ${C.toFixed(4)}, a = ${exp_a.toFixed(4)}</p>
+        `;
+        
+        // Skapa datapunkter för diagrammet
+        const xValues = [];
+        const yValuesLinear = [];
+        const yValuesQuadratic = [];
+        const yValuesExponential = [];
+        
+        // Generera datapunkter för x-värden från -2 till 6
+        for (let x = -2; x <= 6; x += 0.1) {
+            // Avrunda x till 1 decimal för att undvika avrundningsfel
+            const roundedX = Math.round(x * 10) / 10;
+            xValues.push(roundedX);
+            
+            // Beräkna y-värden för varje funktion
+            yValuesLinear.push(k * roundedX + m);
+            yValuesQuadratic.push(a * roundedX * roundedX + b);
+            yValuesExponential.push(C * Math.pow(exp_a, roundedX));
+        }
+        
+        // Skapa diagrammet med Chart.js
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [
+                    {
+                        label: 'a) f(x) = kx + m',
+                        data: yValuesLinear,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'b) f(x) = ax² + b',
+                        data: yValuesQuadratic,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'c) f(x) = C · aˣ',
+                        data: yValuesExponential,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Jämförelse av funktioner som går genom punkterna f(0) = 4 och f(3) = 8'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'x'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'f(x)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elektriska Kretsar - Gymnasiefysik</title>
+    <!-- CSP -- utan 'unsafe-eval' som content 
+     Fick tidigare felet: "Content Security Policy blocks the use of 'eval'", 
+     som uppstod eftersom webbläsarens standard-CSP blockerade eval()-->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'self'">
+  </head>
+  <body>
+    <!-- Root-element där React-appen monteras -->
+    <div id="root"></div>
+    <!-- Skript som laddar React-appen -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

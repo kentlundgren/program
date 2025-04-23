@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test av Firebase-anslutning - Borgholm</title>
+
+    <!-- Debug information i konsolen -->
+    <script>
+        console.log('=== BORGHOLM DATABASE TEST ===');
+        window.debugLog = (message) => {
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] ${message}`);
+        };
+    </script>
+
+    <!-- React och ReactDOM via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+    <!-- Firebase setup -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        window.debugLog('Firebase moduler laddade');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.debugLog('Initierar Firebase test');
+            
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDCbsFdT8up5b_niUzFh9jLP6Lhhj8UFFk",
+                    authDomain: "borgholm-registration.firebaseapp.com",
+                    databaseURL: "https://borgholm-registration-default-rtdb.europe-west1.firebasedatabase.app",
+                    projectId: "borgholm-registration",
+                    storageBucket: "borgholm-registration.firebasestorage.app",
+                    messagingSenderId: "203337885231",
+                    appId: "1:203337885231:web:30fdc40a452f46040348da"
+                };
+
+                window.debugLog('Initierar Firebase med config');
+                const app = initializeApp(firebaseConfig);
+                window.debugLog('Firebase app initierad');
+                
+                const db = getDatabase(app);
+                window.debugLog('Firebase database hämtad');
+
+                // Gör Firebase tillgängligt globalt
+                window.firebaseDb = db;
+                window.firebaseRef = ref;
+                window.firebaseSet = set;
+                window.firebaseOnValue = onValue;
+                window.firebaseRemove = remove;
+
+                window.dispatchEvent(new Event('firebaseReady'));
+                window.debugLog('Firebase är redo för användning');
+            } catch (error) {
+                window.debugLog('FEL vid Firebase-initiering: ' + error.message);
+                console.error('Firebase error:', error);
+                window.dispatchEvent(new CustomEvent('firebaseError', { detail: error }));
+            }
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.loading {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .persons-list {
+            margin-top: 20px;
+        }
+
+        .person-item {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const DatabaseTest = () => {
+            const [connectionStatus, setConnectionStatus] = React.useState('Kontrollerar anslutning...');
+            const [isConnected, setIsConnected] = React.useState(false);
+            const [newName, setNewName] = React.useState('');
+            const [persons, setPersons] = React.useState([]);
+            const [error, setError] = React.useState(null);
+
+            React.useEffect(() => {
+                const handleFirebaseReady = () => {
+                    setIsConnected(true);
+                    setConnectionStatus('Ansluten till Firebase!');
+                    setupDataListener();
+                };
+
+                const handleFirebaseError = (event) => {
+                    setIsConnected(false);
+                    setConnectionStatus('Fel vid anslutning till Firebase');
+                    setError(event.detail);
+                };
+
+                window.addEventListener('firebaseReady', handleFirebaseReady);
+                window.addEventListener('firebaseError', handleFirebaseError);
+
+                return () => {
+                    window.removeEventListener('firebaseReady', handleFirebaseReady);
+                    window.removeEventListener('firebaseError', handleFirebaseError);
+                };
+            }, []);
+
+            const setupDataListener = () => {
+                try {
+                    const dbRef = window.firebaseRef(window.firebaseDb, 'test-persons');
+                    window.debugLog('Sätter upp databaslyssnare');
+
+                    window.firebaseOnValue(dbRef, (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const personsList = Object.values(data);
+                            setPersons(personsList);
+                            window.debugLog(`Hämtade ${personsList.length} personer från databasen`);
+                        } else {
+                            setPersons([]);
+                            window.debugLog('Inga personer i databasen');
+                        }
+                    });
+                } catch (error) {
+                    window.debugLog('Fel vid databaskoppling: ' + error.message);
+                    setError(error);
+                }
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!newName.trim()) return;
+
+                try {
+                    window.debugLog('Försöker spara ny person: ' + newName);
+                    const dbRef = window.firebaseRef(window.firebaseDb, `test-persons/${Date.now()}`);
+                    await window.firebaseSet(dbRef, {
+                        name: newName,
+                        timestamp: new Date().toISOString()
+                    });
+                    window.debugLog('Person sparad i databasen');
+                    setNewName('');
+                } catch (error) {
+                    window.debugLog('Fel vid sparande: ' + error.message);
+                    setError(error);
+                }
+            };
+
+            const getStatusClass = () => {
+                if (error) return 'error';
+                if (!isConnected) return 'loading';
+                return 'success';
+            };
+
+            return (
+                <div className="container">
+                    <h1>Test av Firebase-anslutning</h1>
+                    
+                    <div className={`status ${getStatusClass()}`}>
+                        {connectionStatus}
+                        {error && <div>Felmeddelande: {error.message}</div>}
+                    </div>
+
+                    {isConnected && (
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <label>Lägg till testperson:</label>
+                                <input
+                                    type="text"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    placeholder="Ange namn"
+                                />
+                            </div>
+                            <button type="submit">Spara</button>
+                        </form>
+                    )}
+
+                    <div className="persons-list">
+                        <h2>Sparade personer:</h2>
+                        {persons.length === 0 ? (
+                            <p>Inga personer sparade ännu</p>
+                        ) : (
+                            persons.map((person, index) => (
+                                <div key={index} className="person-item">
+                                    {person.name} - Sparad: {new Date(person.timestamp).toLocaleString()}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<DatabaseTest />);
+    </script>
+</body>
+</html>

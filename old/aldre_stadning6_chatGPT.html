@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sök Äldre Städavtal</title>
+
+    <!-- 
+      ÄNDRING 1: Lagt till 'defer' på alla script – först React, ReactDOM,
+      därefter Babel, följt av datafilerna och sist vår React-app.
+      Ordningsföljden är viktig: 
+      1. React/ReactDOM 
+      2. Babel 
+      3. Datafiler 
+      4. Vår egen React-kod (type="text/babel")
+    -->
+    <!-- STEG 1: Ladda först React och ReactDOM -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- STEG 2: Ladda Babel efter React -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+
+    <!-- STEG 3: Ladda dina datafiler med 'defer' för att säkerställa att de exekveras före vår app-kod -->
+    <script defer src="stadavtal_2a2b.js"></script>
+    <script defer src="stadavtal_2c2d.js"></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px auto; max-width: 1400px; }
+        .search-container { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .search-field-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .combined-input { flex: 1; display: flex; flex-direction: column; }
+        .combined-input label { font-weight: bold; margin-bottom: 5px; color: #333; }
+        .combined-input input,
+        .combined-input select { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            margin-bottom: 5px; 
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .kontering-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .kontering-table th, 
+        .kontering-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .kontering-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Rot-element för React -->
+    <div id="app"></div>
+
+    <!-- 
+      STEG 4: React-applikationen. 
+      ÄNDRING 2: Även här 'defer' för att garantera exekvering i rätt ordning.
+      type="text/babel" så att Babel i webbläsaren kan transpilera koden.
+    -->
+    <script defer type="text/babel">
+        // ÄNDRING 3: Borttag av explicit DOMContentLoaded-listener (valfritt).
+        // I och med att vi använder 'defer' på alla script, är ordningen garanterad.
+        // Om man önskar kan man ha kvar eventlyssnaren, men då är den i regel onödig.
+
+        // Kontrollerar att data finns innan React startas.
+        function checkDataAndStart() {
+            if (typeof stadavtalData2aOch2b === 'undefined' || typeof stadavtalData2cOch2d === 'undefined') {
+                console.error('Data saknas - väntar...');
+                setTimeout(checkDataAndStart, 100); // Kontrollera igen om 100ms
+                return;
+            }
+            
+            // Här börjar React-appen
+            function App() {
+                const [objektkod, setObjektkod] = React.useState('');
+                const [avtalText, setAvtalText] = React.useState('');
+                const [matchingAvtal, setMatchingAvtal] = React.useState([]);
+
+                // Samla alla unika objektkoder och avtalsnamn
+                const { objektkoder, avtalNamn } = React.useMemo(() => {
+                    const obj = new Set();
+                    const namn = new Set();
+
+                    const processData = (data) => {
+                        Object.values(data).forEach(typ => {
+                            Object.values(typ).forEach(avtal => {
+                                if (avtal.objektkod) obj.add(avtal.objektkod);
+                                namn.add(avtal.namn.split(' - ')[0]);
+                            });
+                        });
+                    };
+
+                    processData(stadavtalData2aOch2b);
+                    processData(stadavtalData2cOch2d);
+
+                    return {
+                        objektkoder: Array.from(obj).sort(),
+                        avtalNamn: Array.from(namn).sort()
+                    };
+                }, []);
+
+                // Sökfunktion
+                const searchAvtal = React.useCallback((objKod, text) => {
+                    const results = [];
+                    
+                    const searchInData = (data) => {
+                        Object.entries(data).forEach(([typ, typData]) => {
+                            Object.entries(typData).forEach(([id, avtal]) => {
+                                if (objKod && avtal.objektkod !== objKod) return;
+                                if (text && !avtal.namn.toLowerCase().includes(text.toLowerCase())) return;
+                                if (objKod || text) {
+                                    results.push({ id, ...avtal });
+                                }
+                            });
+                        });
+                    };
+
+                    searchInData(stadavtalData2aOch2b);
+                    searchInData(stadavtalData2cOch2d);
+                    
+                    setMatchingAvtal(results);
+                }, []);
+
+                // Uppdatera sökning när inputs ändras
+                React.useEffect(() => {
+                    searchAvtal(objektkod, avtalText);
+                }, [objektkod, avtalText, searchAvtal]);
+
+                return (
+                    <div>
+                        <h1>Sök Äldre Städavtal</h1>
+                        
+                        <div className="search-container">
+                            <div className="search-field-container">
+                                <div className="combined-input">
+                                    <label>Objektkod:</label>
+                                    <input
+                                        type="text"
+                                        value={objektkod}
+                                        onChange={(e) => setObjektkod(e.target.value)}
+                                        placeholder="Ange objektkod"
+                                    />
+                                    <select 
+                                        value={objektkod}
+                                        onChange={(e) => setObjektkod(e.target.value)}>
+                                        <option value="">Välj objektkod...</option>
+                                        {objektkoder.map(kod => (
+                                            <option key={kod} value={kod}>{kod}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="combined-input">
+                                    <label>Avtalsnamn:</label>
+                                    <input
+                                        type="text"
+                                        value={avtalText}
+                                        onChange={(e) => setAvtalText(e.target.value)}
+                                        placeholder="Ange avtalsnamn"
+                                    />
+                                    <select 
+                                        value={avtalText}
+                                        onChange={(e) => setAvtalText(e.target.value)}>
+                                        <option value="">Välj avtalsnamn...</option>
+                                        {avtalNamn.map(namn => (
+                                            <option key={namn} value={namn}>{namn}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button onClick={() => {
+                                setObjektkod('');
+                                setAvtalText('');
+                                setMatchingAvtal([]);
+                            }}>
+                                Rensa sökning
+                            </button>
+                        </div>
+
+                        <div>
+                            {matchingAvtal.map(avtal => (
+                                <div 
+                                    key={avtal.id} 
+                                    style={{marginBottom: '20px', padding: '10px', border: '1px solid #ddd'}}
+                                >
+                                    <h3>{avtal.namn}</h3>
+                                    <p>Objektkod: {avtal.objektkod || 'Ingen objektkod'}</p>
+                                    <table className="kontering-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Rad</th>
+                                                <th>Konto</th>
+                                                <th>Ansvar</th>
+                                                <th>Verksamhet</th>
+                                                <th>Aktivitet</th>
+                                                <th>Motpart</th>
+                                                <th>Objekt</th>
+                                                <th>Belopp</th>
+                                                <th>Text</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {avtal.rader.map(rad => (
+                                                <tr key={rad.rad}>
+                                                    <td>{rad.rad}</td>
+                                                    <td>{rad.konto}</td>
+                                                    <td>{rad.ansvar}</td>
+                                                    <td>{rad.verksamhet}</td>
+                                                    <td>{rad.aktivitet}</td>
+                                                    <td>{rad.motpart}</td>
+                                                    <td>{rad.objekt || '-'}</td>
+                                                    <td>{rad.belopp.toLocaleString('sv-SE')} kr</td>
+                                                    <td>{rad.text}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ))}
+                            {matchingAvtal.length === 0 && (
+                                <p style={{textAlign: 'center', color: '#666'}}>
+                                    Inga matchande städavtal hittades
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Starta React-applikationen
+            const root = ReactDOM.createRoot(document.getElementById('app'));
+            root.render(<App />);
+        }
+
+        // Anropa funktionen för att starta appen
+        checkDataAndStart();
+    </script>
+</body>
+</html>

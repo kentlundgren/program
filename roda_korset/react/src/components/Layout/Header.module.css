@@ -1,0 +1,53 @@
+/**
+ * CSS-modul för Header-komponenten
+ */
+
+.header {
+  background-color: var(--white);
+  border-bottom: 4px solid var(--primary-color);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--secondary-color);
+}
+
+.logoLink:hover {
+  text-decoration: none;
+}
+
+.logo {
+  height: 60px;
+  margin-right: var(--spacing-md);
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+  .logoContainer {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .logoLink {
+    flex-direction: column;
+  }
+  
+  .logo {
+    margin-right: 0;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+  }
+} 

@@ -1,0 +1,40 @@
+.company-list {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  
+  .company-list table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .company-list th,
+  .company-list td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .company-list th {
+    background-color: #f1f1f1;
+    font-weight: 600;
+  }
+  
+  .company-list tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .company-list tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .company-list tr.selected {
+    background-color: #e1f5fe;
+  }
+  
+  .no-companies {
+    padding: 2rem;
+    text-align: center;
+    color: #666;
+  }

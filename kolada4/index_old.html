@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolada API Datahämtning</title>
+    <!-- Länk till extern CSS-fil -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Kolada API Datahämtning</h1>
+        <p>Använd formuläret nedan för att söka och hämta data från Kolada API.</p>
+        
+        <div id="errorContainer" class="error" style="display: none;"></div>
+        <div id="infoContainer" class="info" style="display: none;"></div>
+        
+        <div class="form-group">
+            <label for="kpiType">Välj KPI-kategori:</label>
+            <select id="kpiType">
+                <option value="">Välj en kategori</option>
+                <!-- Populeras med JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="kpi">Välj nyckeltal (KPI):</label>
+            <select id="kpi" disabled>
+                <option value="">Välj först en kategori</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="municipality">Välj kommun:</label>
+            <select id="municipality">
+                <option value="">Välj en kommun</option>
+                <!-- Populeras med JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="years">Ange år (t.ex. 2020-2023):</label>
+            <input type="text" id="years" placeholder="2020-2023" value="2020-2023">
+        </div>
+        
+        <div class="button-group">
+            <button id="previewData">Förhandsgranska</button>
+            <button id="fetchData">Hämta data</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            Hämtar data, var god vänta...
+        </div>
+        
+        <div id="results">
+            <h2>Resultat</h2>
+            <div id="tableContainer"></div>
+        </div>
+        
+        <div class="debug-toggle">
+            <button id="toggleDebug">Visa/dölj felsökningsinformation</button>
+        </div>
+        <div id="debugInfo" class="debug-info" style="display: none;"></div>
+    </div>
+
+    <!-- Länk till externa JavaScript-filer -->
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+const EventRegistration = () => {
+  const [participants, setParticipants] = useState(() => {
+    const saved = localStorage.getItem('eventParticipants');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [formData, setFormData] = useState({
+    name: '',
+    departureTime: '08:00',
+    meetingTopics: ['', '', ''],
+    meetingTime: '14:00-17:00',
+    saunaTimeSaturday: '17:00-19:00',
+    dinnerTime: '20:00',
+    dinnerLocation: 'Lundgrens Garage',
+    saunaTimeSunday: '08:00-10:00',
+    lunchLocation: 'Arontorp'
+  });
+
+  useEffect(() => {
+    localStorage.setItem('eventParticipants', JSON.stringify(participants));
+  }, [participants]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (participants.length >= 10) {
+      alert('Tyvärr är alla platser upptagna!');
+      return;
+    }
+    setParticipants([...participants, formData]);
+    setFormData({
+      name: '',
+      departureTime: '08:00',
+      meetingTopics: ['', '', ''],
+      meetingTime: '14:00-17:00',
+      saunaTimeSaturday: '17:00-19:00',
+      dinnerTime: '20:00',
+      dinnerLocation: 'Lundgrens Garage',
+      saunaTimeSunday: '08:00-10:00',
+      lunchLocation: 'Arontorp'
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith('meetingTopic')) {
+      const index = parseInt(name.slice(-1));
+      const newTopics = [...formData.meetingTopics];
+      newTopics[index] = value;
+      setFormData(prev => ({
+        ...prev,
+        meetingTopics: newTopics
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Anmälan till Borgholm 8-9 mars 2024</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Namn:</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Avgångstid från Skåne:</label>
+              <input
+                type="time"
+                name="departureTime"
+                value={formData.departureTime}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Tid för möte med styrelsen:</label>
+              <input
+                type="text"
+                name="meetingTime"
+                value={formData.meetingTime}
+                onChange={handleChange}
+                placeholder="14:00-17:00"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Viktiga programpunkter för mötet:</label>
+              {[0, 1, 2].map(index => (
+                <input
+                  key={index}
+                  type="text"
+                  name={`meetingTopic${index}`}
+                  value={formData.meetingTopics[index]}
+                  onChange={handleChange}
+                  placeholder={`Punkt ${index + 1}`}
+                  className="w-full p-2 border rounded"
+                />
+              ))}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Tid för bastu (lördag):</label>
+              <input
+                type="text"
+                name="saunaTimeSaturday"
+                value={formData.saunaTimeSaturday}
+                onChange={handleChange}
+                placeholder="17:00-19:00"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Middagstid:</label>
+              <input
+                type="time"
+                name="dinnerTime"
+                value={formData.dinnerTime}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Plats för middag:</label>
+              <select
+                name="dinnerLocation"
+                value={formData.dinnerLocation}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              >
+                <option value="Lundgrens Garage">Lundgrens Garage</option>
+                <option value="Hotell Borgholm">Hotell Borgholm</option>
+                <option value="Birk Mat och sällskap">Birk Mat och sällskap</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Tid för bastu (söndag):</label>
+              <input
+                type="text"
+                name="saunaTimeSunday"
+                value={formData.saunaTimeSunday}
+                onChange={handleChange}
+                placeholder="08:00-10:00"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Plats för lunch (söndag):</label>
+              <input
+                type="text"
+                name="lunchLocation"
+                value={formData.lunchLocation}
+                onChange={handleChange}
+                placeholder="Arontorp"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors"
+            >
+              Anmäl
+            </button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Anmälda deltagare ({participants.length}/10)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {participants.map((p, index) => (
+            <div key={index} className="mb-4 p-4 bg-gray-50 rounded">
+              <h3 className="font-medium">{p.name}</h3>
+              <p>Avgång: {p.departureTime}</p>
+              <p>Mötestid: {p.meetingTime}</p>
+              <p>Bastutid lördag: {p.saunaTimeSaturday}</p>
+              <p>Middag: {p.dinnerTime} på {p.dinnerLocation}</p>
+              <p>Bastutid söndag: {p.saunaTimeSunday}</p>
+              <p>Lunch söndag: {p.lunchLocation}</p>
+              {p.meetingTopics.some(topic => topic) && (
+                <div>
+                  <p className="font-medium mt-2">Föreslagna programpunkter:</p>
+                  <ul className="list-disc pl-5">
+                    {p.meetingTopics.filter(topic => topic).map((topic, i) => (
+                      <li key={i}>{topic}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+// Root component
+const App = () => {
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <EventRegistration />
+    </div>
+  );
+};
+
+export default App;

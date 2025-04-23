@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cache-busting: Förhindra cachelagring så att alla uppdateringar blir synliga direkt -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="description" content="Utveckling av moderna webbapplikationer med AI-stöd, React och Firebase integration">
+    <meta name="keywords" content="React, Firebase, AI utveckling, webbutveckling, JavaScript, databas integration">
+    <meta name="author" content="Kent Lundgren">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Utveckling av interaktiva webbapplikationer med AI-stöd">
+    <meta property="og:description" content="Modern webbutveckling med fokus på React, Firebase och AI-assisterad utveckling">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://www.kentlundgren.se/ai-utveckling">
+    <!-- Versionerad titeletikett tvingar fram omladdning -->
+    <title>Utveckling av interaktiva webbapplikationer med AI-stöd [v.2025-04-13]</title>
+    <!-- Versionerad CSS-länk för att tvinga fram omladdning av stilar -->
+    <link rel="stylesheet" href="styles.css?v=2025-04-13">
+    <!-- JavaScript för att förhindra cachelagring -->
+    <script>
+        // Lägg till tidsstämpel som parameter för att förhindra cachelagring
+        function addTimestampToLinks() {
+            try {
+                // Generera en unik tidsstämpel
+                const timestamp = new Date().getTime();
+                // Hämta alla länkar i calculator-links-klassen
+                const links = document.querySelectorAll('.calculator-links a');
+                // Lägg till tidsstämpel för varje länk
+                links.forEach(link => {
+                    try {
+                        const url = new URL(link.href);
+                        // Lägg till eller uppdatera tidsstämpelparametern
+                        url.searchParams.set('_t', timestamp);
+                        link.href = url.toString();
+                    } catch (e) {
+                        console.error("Kunde inte lägga till tidsstämpel till länk:", link.href, e);
+                    }
+                });
+                console.log("Tidsstämplar har lagts till för alla länkar:", timestamp);
+            } catch (error) {
+                console.error("Fel vid hantering av länkar:", error);
+            }
+        }
+        
+        // Kör funktionen när DOM är laddad
+        document.addEventListener('DOMContentLoaded', addTimestampToLinks);
+        
+        // Tvinga omladdning av sidan om användaren kommer från historik (t.ex. via back-knapp)
+        window.addEventListener('pageshow', function(event) {
+            // Kontrollera om sidan laddades från cache
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                console.log('Sidan laddades från cache, tvingar omladdning');
+                // Tvinga webbläsaren att hämta en ny version
+                window.location.reload(true);
+            }
+        });
+        
+        // Lagra version i localStorage för att kunna jämföra med tidigare versioner
+        const currentVersion = '2025-04-13';
+        const storedVersion = localStorage.getItem('program-version');
+        
+        // Om versionen har ändrats, tvinga omladdning
+        if (storedVersion && storedVersion !== currentVersion) {
+            console.log('Ny version upptäckt. Gammal:', storedVersion, 'Ny:', currentVersion);
+            localStorage.setItem('program-version', currentVersion);
+            // Tvinga omladdning endast om versionen har ändrats och det inte är första besöket
+            if (document.readyState === 'complete') {
+                window.location.reload(true);
+            }
+        } else {
+            // Spara nuvarande version
+            localStorage.setItem('program-version', currentVersion);
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Utveckling av interaktiva webbapplikationer med AI-stöd</h1>
+        <p>En inblick i modern webbutveckling med React och Firebase</p>
+        <!-- Ljudspelare utan automatisk uppspelning -->
+        <div class="audio-player">
+            <audio id="background-music" controls>
+                <source src="https://kentlundgren.se/program/karlek.mp3" type="audio/mpeg">
+                Din webbläsare stödjer inte ljudelementet.
+            </audio>
+            <button id="toggle-sound" class="sound-button">🔇</button>
+        </div>
+    </header>
+
+    <main class="ai-section">
+        <div class="announcement">
+            <h3>Ny funktion: Programväljare!</h3>
+            <p>Nu kan du enkelt växla mellan flera program utan att behöva navigera tillbaka. <a href="programvaljare.html" target="_blank">Testa programväljaren här &rarr;</a></p>
+        </div>
+
+        <section>
+            <h2>Modern utvecklingsprocess</h2>
+            <p>Modern webbutveckling handlar allt mer om att skapa interaktiva och användarvänliga applikationer. 
+            <br>Här beskriver vi hur vi utvecklat React-baserade webbapplikationer i samarbete med generativ AI, med särskilt fokus på databasintegration med 
+            <a href="https://console.firebase.google.com/u/0/project/borgholm-registration/overview">Firebase</a>.</p>
+        </section>
+
+        <section>
+            <h2>Interaktiv utvecklingsprocess</h2>
+            <p>Genom att arbeta tillsammans med AI-modeller kan vi snabbare utveckla robusta webbapplikationer. AI:n hjälper till med allt från grundläggande kodstruktur till komplexa databasintegrationer, samtidigt som den bidrar med best practices och moderna utvecklingsmönster.</p>
+        </section>
+
+        <section>
+            <h2>Användarvänlig design</h2>
+            <p>Vi har implementerat flera designprinciper för att göra applikationerna mer intuitiva:</p>
+            <ul>
+                <li>Tydligt markerade inputfält (gul bakgrund) för att visa var användaren kan mata in data</li>
+                <li>Färgkodad feedback när data ändras eller uppdateras</li>
+                <li>Responsiv design som anpassar sig till olika skärmstorlekar (desktop, tablet, mobil)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Databasintegration</h2>    
+            <p>Ett kritiskt moment i utvecklingen var integrationen med Firebase, Googles molnbaserade databastjänst. Detta krävde noggrann konfiguration och flera iterationer i samarbete med AI för att uppnå en stabil och säker koppling.</p>
+        </section>
+
+        <section>
+            <h2>Teknisk implementation</h2>
+            <p>Applikationerna bygger på moderna webbteknologier:</p>
+            <ul>
+                <li>React 18 för komponentbaserad utveckling</li>
+                <li>Firebase för realtidsdatalagring</li>
+                <li>Responsiv design med CSS </li>
+                <li>JSX för förbättrad kodläsbarhet</li>
+            </ul>
+        </section>     
+        
+        <section>
+            <h2>Exempel på program</h2>
+            <p>Exempel på program som gjorts:</p>
+            <ul class="calculator-links">
+                <li><a href="borgholmsresa/borgholmsresa_test.html" target="_blank" >Ett formulär, en enkät, som hjälper till att samordna tider, programpunkter, under en helg</a></li>
+                <li><a href="borgholmsresa/test_databas_59.html" target="_blank"      >Ett testprogram för att se att kontakten med databasen fungerar, dvs Firebase-integrationen</a></li> 
+                <li><a href="../program/stadning/stadning22.html" target="_blank">Ett program för att förenkla kodningen av nya städavtal i en kommun</a></li>        
+                <li><a href="https://kentlundgren.se/AI/skogsvardeApp/" target="_blank">Ett program som visualiserar förändringar i pris för en hektar skog 1994-2024</a></li>           
+                <li><a href="kurvor/" target="_blank">Matematikuppgift</a></li>  
+                <li><a href="fysik/" target="_blank">Fysikuppgift</a></li>  
+                <li><a href="kvantfysik/" target="_blank">Kvantfysik</a></li>    
+                <li><a href="https://kentlundgren.se/program/testprogram/biodiversitet-resiliens/" target="_blank">Biodiversitet och resiliens</a></li>
+                <li><a href="testprogram/generativai-react/" target="_blank">Frågor kring Generativ AI med React</a></li>
+                <li><a href="testprogram/generativAI/" target="_blank">Introduktion till generativ AI</a></li>
+                <li><a href="ekonomi/" target="_blank" >Ekonomiprogram, balans- och resultaträkning</a></li> 
+                <li><a href="klimatscenarier/" target="_blank">Klimatscenarier - visualisering av olika klimatscenarier</a></li>
+                <li><a href="kolada4/" target="_blank" >Progam som hämtar data från från database Kolada</a></li>  
+                <li><a href="klimatkollen/" target="_blank">Klimatkollen - ett program för att visar klimatdata</a></li>
+                <li><a href="https://kentlundgren.se/program/solen/" target="_blank">Ett program som visar solens upp och nedgång (version 1)</a></li>
+                <li class="link-group">
+                <a href="https://kentlundgren.se/program/solen2/" target="_blank">Ett program som visar solens upp och nedgång (version 2)</a>
+                    <a href="https://youtu.be/3SNHoI7dJmE" target="_blank">Se demo-video</a>
+                </li>
+                <li class="link-group">
+                <a href="https://kentlundgren.se/program/testprogram/AnthropicAPIkey/" target="_blank">Ett testprogram för Anthropic API-nyckel</a>
+                </li>
+                <li><a href="../kalkyler/" target="_blank">Läs mer om kalkyler gjorda med AI</a></li>   
+                <li class="highlighted-item">
+                    <a href="programvaljare.html" target="_blank"><strong>NYHET! Programväljare</strong> - Svep enkelt mellan flera program</a>
+                </li>
+            </ul>
+        </section>
+
+        <a href="index_fordjupad.html" class="read-more-link">Läs mer om utvecklingsprocessen och tekniska detaljer </a> 
+     
+    </main>
+
+    <footer>
+        <p>© 2025 Kent Lundgren. Alla rättigheter förbehållna.</p>
+        <p>Kontakt: <a href="mailto:kent@kentlundgren.se">kent@kentlundgren.se</a></p>
+        <p>Senast uppdaterad: 13 april 2025</p>
+    </footer>
+    
+    <!-- JavaScript för ljudspelaren -->
+    <script>
+        // ÄNDRA DENNA VARIABEL TILL false FÖR ATT STARTA MED LJUDET AVSTÄNGT
+        const SOUND_ON_BY_DEFAULT = false;
+        
+        // Förberedelse: Försök starta ljud så tidigt som möjligt (innan DOM är laddad)
+        (function preloadAttempt() {
+            try {
+                // Skapa ett temporärt ljudelement och försök spela det
+                const tempAudio = new Audio("https://kentlundgren.se/program/karlek.mp3");
+                tempAudio.volume = 0.01; // Mycket låg volym för att vara diskret
+                tempAudio.play().catch(e => console.log("Förberedande uppspelning förhindrades"));
+            } catch(e) {
+                console.log("Förberedande uppspelning misslyckades");
+            }
+        })();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioElement = document.getElementById('background-music');
+            const toggleButton = document.getElementById('toggle-sound');
+            
+            // Sätt initialt ljudtillstånd baserat på konfigurationen
+            audioElement.muted = !SOUND_ON_BY_DEFAULT;
+            toggleButton.textContent = SOUND_ON_BY_DEFAULT ? '🔊' : '🔇';
+            toggleButton.title = SOUND_ON_BY_DEFAULT ? 'Stäng av ljud' : 'Aktivera ljud';
+            
+            // Funktion för att växla ljud på/av
+            function toggleSound() {
+                if (audioElement.muted) {
+                    // Aktivera ljud
+                    audioElement.muted = false;
+                    toggleButton.textContent = '🔊';
+                    toggleButton.title = 'Stäng av ljud';
+                    
+                    // Starta om ljudet om det har pausats
+                    if (audioElement.paused) {
+                        audioElement.play();
+                    }
+                } else {
+                    // Stäng av ljud
+                    audioElement.muted = true;
+                    toggleButton.textContent = '🔇';
+                    toggleButton.title = 'Aktivera ljud';
+                }
+            }
+            
+            // Lyssna på klick på ljudknappen
+            toggleButton.addEventListener('click', toggleSound);
+            
+            // Lyssna på när ljud slutar spelas för att loopa
+            audioElement.addEventListener('ended', function() {
+                audioElement.currentTime = 0;
+                audioElement.play();
+            });
+            
+            // Försök starta ljudet direkt om möjligt - olika metoder
+            function attemptAutoplay() {
+                if (SOUND_ON_BY_DEFAULT) {
+                    // Metod 1: Direkt uppspelning
+                    audioElement.play().catch(function(error) {
+                        console.log("Direkt autoplay förhindrades:", error);
+                        
+                        // Metod 2: Försök med inställd volym
+                        audioElement.volume = 0.1;
+                        audioElement.play().catch(function(error) {
+                            console.log("Autoplay med låg volym förhindrades:", error);
+                            
+                            // Uppdatera UI för att visa korrekt status
+                            toggleButton.textContent = '🔇';
+                            toggleButton.title = 'Aktivera ljud';
+                            audioElement.muted = true;
+                        });
+                    });
+                } else {
+                    // Om ljud är avstängt enligt konfiguration, visa rätt ikon
+                    audioElement.muted = true;
+                    toggleButton.textContent = '🔇';
+                    toggleButton.title = 'Aktivera ljud';
+                }
+            }
+            
+            // Försök spela ljud direkt
+            attemptAutoplay();
+            
+            // Försök spela vid första interaktion
+            const interactionEvents = ['click', 'touchstart', 'keydown', 'scroll'];
+            interactionEvents.forEach(event => {
+                document.addEventListener(event, function startAudioOnInteraction() {
+                    if (SOUND_ON_BY_DEFAULT && audioElement.paused) {
+                        audioElement.play().catch(e => console.log("Uppspelning vid interaktion misslyckades:", e));
+                        if (!audioElement.muted) {
+                            toggleButton.textContent = '🔊';
+                            toggleButton.title = 'Stäng av ljud';
+                        }
+                    }
+                    
+                    // Ta bort alla dessa lyssnare efter första interaktionen
+                    interactionEvents.forEach(evt => 
+                        document.removeEventListener(evt, startAudioOnInteraction));
+                }, { once: true });
+            });
+        });
+    </script>
+</body>
+</html>

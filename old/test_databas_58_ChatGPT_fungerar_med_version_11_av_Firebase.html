@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <!--
+    ===========================================
+    PROGRAM: BORGHOLM DATABASE TEST v58
+    ===========================================
+    Detta program är en enkel webbapplikation som testar anslutningen till Firebase Realtime Database och tillåter användaren att lägga till och visa testpersoner i databasen.
+
+    BESKRIVNING:
+    - Använder Firebase SDK för att ansluta till en Realtime Database.
+    - Bygger en React-komponent för att hantera användargränssnittet.
+    - Hanterar Content Security Policy (CSP) för att säkerställa att webbläsaren tillåter alla nödvändiga resurser.
+
+    UPPDATERINGAR SOM KRÄVDES FÖR ATT FÅ PROGRAMMET ATT FUNGERA:
+    - Korrigerade `storageBucket` i Firebase-konfigurationen.
+    - Uppdaterade CSP för att inkludera alla nödvändiga domäner och protokoll.
+    - Lagt till `crossorigin` attribut i skripttaggar för att undvika CORS-problem.
+    - **VIKTIGT:** Den senaste ändringen involverade att lägga till `wss://` protokoll och domäner i CSP:s `connect-src` för att tillåta WebSocket-anslutningar till Firebase.
+    
+    **ÄNDRINGEN (VERSION 57):**
+    I CSP-META-TAGGEN HAR VI LAGT TILL `wss://*.firebaseio.com` OCH `wss://*.firebasedatabase.app` I `connect-src` DIREKTIVET FÖR ATT TILLÅTA WEBSOCKET-ANSLUTNINGAR. DETTA VAR AVGÖRANDE FÖR ATT LÖSA FELMEDDELANDET OCH SÄKERSTÄLLA OPTIMAL PRESTANDA.
+    
+
+    BESKRIVNING av version 58:
+    - Använder **Firebase SDK version 11** för att ansluta till en Realtime Database.
+    - Bygger en React-komponent för att hantera användargränssnittet.
+    - Hanterar Content Security Policy (CSP) för att säkerställa att webbläsaren tillåter alla nödvändiga resurser.
+
+    UPPDATERINGAR I DENNA VERSION (v58):
+    - **Uppdaterat Firebase SDK från version 9 till version 11.**
+    - Justerat importsatser och eventuella API-anrop för att vara kompatibla med version 11.
+    - Uppdaterat CSP vid behov för att inkludera eventuella nya domäner eller protokoll.
+
+    SKILLNADER MELLAN FIREBASE SDK v9 OCH v11:
+    - Version 11 innehåller buggfixar och prestandaförbättringar.
+    - Möjliga API-ändringar som kräver justeringar i koden.
+    - Förbättrad säkerhet och borttagning av föråldrade funktioner.
+    -->    
+    
+    <!-- Uppdaterad CSP för att inkludera nödvändiga domäner och protokoll -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://*.googleapis.com;
+        connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://*.googleapis.com https://www.googleapis.com wss://*.firebaseio.com wss://*.firebasedatabase.app;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebaseio.com https://*.firebasedatabase.app https://cdnjs.cloudflare.com https://www.gstatic.com https://www.gstatic.com/firebasejs/11.0.0/ https://*.googleapis.com;
+        script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebaseio.com https://*.firebasedatabase.app https://cdnjs.cloudflare.com https://www.gstatic.com https://www.gstatic.com/firebasejs/11.0.0/ https://*.googleapis.com;
+        style-src 'self' 'unsafe-inline';
+        frame-src 'self' https://*.firebaseapp.com;
+    ">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test av Firebase-anslutning - Borgholm v58</title>
+
+    <!-- Debug information i konsolen -->
+    <script>
+        console.clear(); // Rensar konsolen vid start
+        console.log('=== BORGHOLM DATABASE TEST v58 - STARTING ===');
+        console.log('Använder Firebase SDK version 11');
+
+        window.debugLog = (message, data = null) => {
+            const timestamp = new Date().toLocaleTimeString();
+            if (data) {
+                console.log(`[${timestamp}] ${message}`, data);
+            } else {
+                console.log(`[${timestamp}] ${message}`);
+            }
+        };
+    </script>
+
+    <!-- React och ReactDOM via CDN -->
+    <!-- Lagt till 'crossorigin' attribut för att undvika CORS-problem -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin></script>
+
+    <!-- Firebase setup - Uppdaterad till version 11 -->
+    <script type="module">
+        // Använder Firebase SDK v11.0.0
+        // **UPPDATERING: Ändrat från version 9 till version 11**
+        import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+        import { getDatabase, ref, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js';
+
+        window.debugLog('Firebase v11.0.0 moduler laddade');
+
+        const initFirebase = async () => {
+            window.debugLog('Initierar Firebase');  
+  
+                try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDCbsFdT8up5b_niUzFh9jLP6Lhhj8UFFk",
+                    authDomain: "borgholm-registration.firebaseapp.com",
+                    databaseURL: "https://borgholm-registration-default-rtdb.europe-west1.firebasedatabase.app",
+                    projectId: "borgholm-registration",
+                    // Korrigerat storageBucket-värde
+                    storageBucket: "borgholm-registration.appspot.com",
+                    messagingSenderId: "203337885231",
+                    appId: "1:203337885231:web:30fdc40a452f46040348da"
+                };
+
+
+                window.debugLog('Firebase config:', firebaseConfig);
+
+                // Kontrollera om en Firebase-app redan är initialiserad
+                if (!getApps().length) {
+                    const app = initializeApp(firebaseConfig);
+                    window.debugLog('Firebase app initierad med version 11.0.0');
+                } else {
+                    window.debugLog('Firebase app redan initialiserad');
+                }
+
+                const db = getDatabase();
+                window.debugLog('Firebase database referens skapad');
+
+                // Test av databasanslutning med explicit logging
+                const testRef = ref(db, '.info/connected');
+                window.debugLog('Testar databasanslutning...');
+
+                onValue(testRef, (snapshot) => {
+                    const connected = snapshot.val();
+                    window.debugLog(`Anslutningsstatus: ${connected ? 'Ansluten' : 'Ej ansluten'}`);
+                });
+
+                // Gör Firebase tillgängligt globalt med version-info
+                window.firebaseVersion = '11.0.0';
+                window.firebaseDb = db;
+                window.firebaseRef = ref;
+                window.firebaseSet = set;
+                window.firebaseOnValue = onValue;
+                window.firebaseRemove = remove;
+
+                window.dispatchEvent(new Event('firebaseReady'));
+                window.debugLog('Firebase är redo för användning');
+            } catch (error) {
+                window.debugLog('FEL vid Firebase-initiering:', error);
+                console.error('Detaljerat Firebase-fel:', error);
+                window.dispatchEvent(new CustomEvent('firebaseError', { detail: error }));
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFirebase);
+        } else {
+            initFirebase();
+        }
+    </script>
+
+    <!-- Din CSS-styling här -->
+    <style>
+        /* Samma som tidigare */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .status {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .status.success {
+            background-color: #e0ffe0;
+            color: #008000;
+        }
+        .status.error {
+            background-color: #ffe0e0;
+            color: #ff0000;
+        }
+        .status.loading {
+            background-color: #ffffe0;
+            color: #ffa500;
+        }
+        .persons-list {
+            margin-top: 20px;
+        }
+        .person-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .debug-info {
+            margin-top: 20px;
+            font-style: italic;
+        }
+        .version-info {
+            margin-top: 10px;
+            text-align: right;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // React-komponenten för databastestet
+        const DatabaseTest = () => {
+            const [connectionStatus, setConnectionStatus] = React.useState('Kontrollerar anslutning...');
+            const [isConnected, setIsConnected] = React.useState(false);
+            const [newName, setNewName] = React.useState('');
+            const [persons, setPersons] = React.useState([]);
+            const [error, setError] = React.useState(null);
+            const [lastOperation, setLastOperation] = React.useState(null);
+
+            React.useEffect(() => {
+                const handleFirebaseReady = () => {
+                    setIsConnected(true);
+                    setConnectionStatus('Ansluten till Firebase!');
+                    setupDataListener();
+                    window.debugLog('React-komponent: Firebase är redo');
+                };
+
+                const handleFirebaseError = (event) => {
+                    setIsConnected(false);
+                    setConnectionStatus('Fel vid anslutning till Firebase');
+                    setError(event.detail);
+                    window.debugLog('React-komponent: Firebase-fel upptäckt');
+                };
+
+                window.addEventListener('firebaseReady', handleFirebaseReady);
+                window.addEventListener('firebaseError', handleFirebaseError);
+
+                // Kontrollera om Firebase redan är initialiserat
+                if (window.firebaseDb) {
+                    handleFirebaseReady();
+                }
+
+                return () => {
+                    window.removeEventListener('firebaseReady', handleFirebaseReady);
+                    window.removeEventListener('firebaseError', handleFirebaseError);
+                };
+            }, []);
+
+            const setupDataListener = () => {
+                try {
+                    const dbRef = window.firebaseRef(window.firebaseDb, 'borgholm-test/persons');
+                    window.debugLog('Sätter upp databaslyssnare på borgholm-test/persons');
+
+                    window.firebaseOnValue(dbRef, (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const personsList = Object.values(data);
+                            setPersons(personsList);
+                            window.debugLog(`Hämtade ${personsList.length} personer från databasen`);
+                        } else {
+                            setPersons([]);
+                            window.debugLog('Inga personer i databasen');
+                        }
+                    }, (error) => {
+                        window.debugLog('Fel vid datahämtning:', error);
+                        console.error('Detaljerat fel vid datahämtning:', error);
+                        setError(error);
+                    });
+                } catch (error) {
+                    window.debugLog('Fel vid databaskoppling:', error);
+                    console.error('Detaljerat fel vid databaskoppling:', error);
+                    setError(error);
+                }
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!newName.trim()) return;
+
+                try {
+                    setLastOperation('Sparar ny person...');
+                    window.debugLog('Försöker spara ny person:', newName);
+
+                    const dbRef = window.firebaseRef(
+                        window.firebaseDb,
+                        `borgholm-test/persons/${Date.now()}`
+                    );
+
+                    await window.firebaseSet(dbRef, {
+                        name: newName,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    window.debugLog('Person sparad i databasen');
+                    setLastOperation('Person sparad framgångsrikt!');
+                    setNewName('');
+                } catch (error) {
+                    window.debugLog('Fel vid sparande:', error);
+                    console.error('Detaljerat fel vid sparande:', error);
+                    setError(error);
+                    setLastOperation('Fel vid sparande av person');
+                }
+            };
+
+            const getStatusClass = () => {
+                if (error) return 'error';
+                if (!isConnected) return 'loading';
+                return 'success';
+            };
+
+            return (
+                <div className="container">
+                    <h1>Test av Firebase-anslutning v58</h1>
+                    <p>Använder Firebase SDK version {window.firebaseVersion}</p>
+
+                    <div className={`status ${getStatusClass()}`}>
+                        {connectionStatus}
+                        {error && (
+                            <div>
+                                <div>Felmeddelande: {error.message}</div>
+                                <div>Felkod: {error.code}</div>
+                            </div>
+                        )}
+                    </div>
+
+                    {isConnected && (
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <label>Lägg till testperson:</label>
+                                <input
+                                    type="text"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    placeholder="Ange namn"
+                                />
+                            </div>
+                            <button type="submit">Spara person</button>
+                        </form>
+                    )}
+
+                    <div className="persons-list">
+                        <h2>Sparade personer:</h2>
+                        {persons.length === 0 ? (
+                            <p>Inga personer sparade ännu</p>
+                        ) : (
+                            persons.map((person, index) => (
+                                <div key={index} className="person-item">
+                                    <span>{person.name}</span>
+                                    <span>{new Date(person.timestamp).toLocaleString()}</span>
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    {lastOperation && (
+                        <div className="debug-info">
+                            Senaste operation: {lastOperation}
+                        </div>
+                    )}
+
+                    <div className="version-info">
+                        Firebase SDK v{window.firebaseVersion}
+                    </div>
+                </div>
+            );
+        };
+
+        // Montera React-applikationen
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<DatabaseTest />);
+    </script>
+</body>
+</html>

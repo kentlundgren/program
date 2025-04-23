@@ -1,0 +1,207 @@
+/* ==========================================
+   STÄDAVTAL version 36 - CSS
+   ==========================================
+   Detta stylesheet kompletterar Bootstrap med anpassade stilar
+   för städavtalshanteringen. Strukturen är uppdelad i sektioner
+   för enkel navigation och underhåll.
+*/
+
+/* === GRUNDLÄGGANDE TYPOGRAFI OCH FÄRGER === */
+:root {
+    /* Definierar grundläggande färgvariabler för hela applikationen */
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --light-gray: #ecf0f1;
+    --dark-gray: #7f8c8d;
+}
+
+body {
+    /* Grundläggande textformatering för hela sidan */
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--primary-color);
+    background-color: #f8f9fa;
+}
+
+/* === HUVUDRUBRIKER OCH TEXT === */
+h1 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+}
+
+h2 {
+    /* Underrubriker i cards */
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* === FORMULÄRELEMENT === */
+.form-select {
+    /* Anpassar utseendet på dropdown-menyer */
+    border-color: var(--dark-gray);
+    transition: border-color 0.2s ease-in-out;
+}
+
+.form-select:hover {
+    border-color: var(--accent-color);
+}
+
+.form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Förbättrad tillgänglighet för formuläretiketter */
+.form-label {
+    color: var(--secondary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* === KNAPPAR OCH INTERAKTIVA ELEMENT === */
+.btn {
+    /* Grundläggande knappstil */
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-primary {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+/* === CARDS OCH CONTAINRAR === */
+.card {
+    /* Skugga och rundade hörn för cards */
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    /* Stilar för card-headers */
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 1rem;
+}
+
+/* === FEEDBACK OCH MEDDELANDEN === */
+.alert {
+    /* Anpassar utseendet på feedback-meddelanden */
+    border: none;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.alert-success {
+    background-color: rgba(39, 174, 96, 0.1);
+    color: var(--success-color);
+}
+
+.alert-warning {
+    background-color: rgba(243, 156, 18, 0.1);
+    color: var(--warning-color);
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--danger-color);
+}
+
+/* === MODAL-DIALOGER === */
+.modal-content {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--light-gray);
+    padding: 1rem;
+}
+
+/* === RESPONSIV DESIGN === */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* === HJÄLPKLASSER === */
+.text-muted {
+    /* Förbättrar läsbarheten för hjälptexter */
+    color: var(--dark-gray) !important;
+    font-size: 0.875rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* === ANIMATIONER === */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* === TILLGÄNGLIGHET === */
+/* Förbättrar fokusringar för tangentbordsnavigation */
+:focus {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Förbättrar kontrast för bättre läsbarhet */
+.text-contrast {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Nu är css filen slut */

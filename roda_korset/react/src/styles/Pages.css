@@ -1,0 +1,112 @@
+/* 
+  * Pages.css - Stilar för alla sidkomponenter
+  * Version: 1.1.0
+  * 
+  * Här skedde en uppdatering för att lägga till styling för tipssidan
+  * och dess komponenter (source-box, tip-box, warning-box)
+  */
+  
+/* Gemensamma sidestilar */
+.page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.page-container h1 {
+  color: #e30613;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e30613;
+  padding-bottom: 10px;
+}
+
+.page-container h2 {
+  color: #333;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-left: 4px solid #e30613;
+  padding-left: 10px;
+}
+
+.page-container h3 {
+  color: #555;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.page-container p {
+  margin-bottom: 15px;
+}
+
+.page-container a {
+  color: #e30613;
+  text-decoration: none;
+}
+
+.page-container a:hover {
+  text-decoration: underline;
+}
+
+.page-container ul, 
+.page-container ol {
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+
+.page-container li {
+  margin-bottom: 8px;
+}
+
+/* Speciella boxstilar för tipssidan */
+.source-box, 
+.tip-box, 
+.warning-box {
+  margin: 20px 0;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.source-box {
+  background-color: #f8f9fa;
+  border-left: 5px solid #007bff;
+}
+
+.tip-box {
+  background-color: #e9f7ef;
+  border-left: 5px solid #27ae60;
+}
+
+.warning-box {
+  background-color: #fef5e7;
+  border-left: 5px solid #f39c12;
+}
+
+.source-box h3, 
+.tip-box h3 {
+  margin-top: 10px;
+  color: #444;
+}
+
+.source-box a {
+  color: #007bff;
+  font-weight: 500;
+}
+
+.source-box a:hover {
+  color: #0056b3;
+}
+
+/* Responsiv anpassning */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 15px;
+  }
+  
+  .source-box, 
+  .tip-box, 
+  .warning-box {
+    padding: 12px 15px;
+  }
+} 

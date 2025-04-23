@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">          
+ <!--     CSP-tagg med connect-src direktiv och frame-src direktig:                      --> 
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app; connect-src https://*.firebaseio.com https://*.firebasedatabase.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; frame-src 'self';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borgholm Event Registration - Version 8F</title>             
+    
+<!--
+        Version 8F av programmet - med React 18 och JSX
+          
+        Denna version representerar en modernisering av programmet genom uppgradering till React 18,
+        vilket ger förbättrad prestanda och nya funktioner samtidigt som den behåller enkelhet i implementation.   
+        Man kan se tre gjorda anmälningar, men man kan inte lägga till en fjärde person
+        
+        Huvudsakliga fördelar med denna version:
+        - Använder React 18's nya funktioner för förbättrad rendering och prestanda
+        - Behåller JSX-syntax för läsbar och underhållbar kod
+        - Utnyttjar automatisk batching för alla uppdateringar i React 18
+        - Concurrent rendering-möjligheter genom React 18's nya arkitektur
+        
+        Implementationsmetod:
+        - "HTML-baserad React" (Client-side React med HTML-integration)
+        - Kallas även "vanilla React" eller "browser React"
+        - Körs direkt i webbläsaren utan byggprocess
+        - Använder CDN (Content Delivery Network) för alla nödvändiga bibliotek
+        
+        Teknisk implementation:
+        - React 18 och ReactDOM 18 laddas via CDN (unpkg.com)
+        - Babel används för JSX-transpilering
+        - Ren HTML-integration utan behov av byggverktyg    
+        
+       // UPDATED I VERSION 18: used createRoot API from React 18
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        // the old ReactDOM.render call IS replaced with the new root.render
+        root.render(<EventRegistration />);
+               
+        
+        Alternativa utvecklingsmetoder:
+        Modern React-utveckling använder ofta byggverktyg som:
+        - Vite
+        - Create React App
+        - Next.js
+        Dessa ger fördelar som:
+        - Automatiskt JSX-stöd
+        - npm-pakethantering
+        - Utvecklingsverktyg
+        - Kodoptimering
+        Men kräver:
+        - Byggprocess före driftsättning
+        - Mer komplex setup
+        - Svårare integration i befintliga webbsidor
+    -->   
+    
+
+    <!-- Debug information i konsolen -->
+    <script>
+        console.log('=== BORGHOLM REGISTRATION SYSTEM v8 ===');
+        console.log('Debugging är aktiverat');
+        
+        // Funktion för att logga viktiga händelser
+        window.debugLog = (message) => {
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] ${message}`);
+        };
+    </script>
+
+    <!-- React och ReactDOM via CDN för HTML-kompatibilitet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+    <!-- Firebase setup och konfiguration -->
+    <script type="module">
+        // Importera Firebase-funktioner
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        window.debugLog('Firebase moduler laddade');
+
+        // Vänta tills DOM är redo
+        document.addEventListener('DOMContentLoaded', () => {
+            window.debugLog('DOM Content Loaded - Initierar Firebase');
+            
+            try {
+            // Firebase configuration - ERSÄTT MED DIN EGEN KONFIGURATION    
+            // Programmeraren vet att denna del kan tas bort - när riktiga värden har satts in - men denna del får stå kvar, "bakom" //
+            //      const firebaseConfig = {
+            //      apiKey: "YOUR_API_KEY",
+            //      authDomain: "YOUR_AUTH_DOMAIN",
+            //      databaseURL: "YOUR_DATABASE_URL",
+            //      projectId: "YOUR_PROJECT_ID",
+            //      storageBucket: "YOUR_STORAGE_BUCKET",
+            //      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            //      appId: "YOUR_APP_ID"
+            //    };         
+            
+
+             
+                 // Import the functions you need from the SDKs you need
+                 // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+                   // TODO: Add SDKs for Firebase products that you want to use
+                   // https://firebase.google.com/docs/web/setup#available-libraries
+
+                   // Your web app's Firebase configuration
+                   const firebaseConfig = {
+                     apiKey: "AIzaSyDCbsFdT8up5b_niUzFh9jLP6Lhhj8UFFk",
+                       authDomain: "borgholm-registration.firebaseapp.com",
+                        databaseURL: "https://borgholm-registration-default-rtdb.europe-west1.firebasedatabase.app",
+                         projectId: "borgholm-registration",
+                           storageBucket: "borgholm-registration.firebasestorage.app",
+                             messagingSenderId: "203337885231",
+                               appId: "1:203337885231:web:30fdc40a452f46040348da"
+                     };
+
+                // Initiera Firebase
+                const app = initializeApp(firebaseConfig);
+                const db = getDatabase(app);
+                window.debugLog('Firebase initialiserad framgångsrikt');
+
+                // Gör Firebase tillgängligt globalt
+                window.firebaseDb = db;
+                window.firebaseRef = ref;
+                window.firebaseSet = set;
+                window.firebaseOnValue = onValue;
+                window.firebaseRemove = remove;
+
+                // Signalera att Firebase är redo
+                window.dispatchEvent(new Event('firebaseReady'));
+                window.debugLog('Firebase Ready event dispatched');
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                window.debugLog('FEL vid Firebase-initialisering: ' + error.message);
+                window.dispatchEvent(new CustomEvent('firebaseError', { detail: error }));
+            }
+        });
+    </script>
+
+    <style>
+        /* === GRUNDLÄGGANDE STYLING === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        /* === CONTAINER OCH GRID LAYOUT === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === FORMULÄR OCH INPUT STYLING === */
+        .input-field {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* === KNAPPAR === */
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* === DELTAGARLISTOR === */
+        .participant-card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .preferences-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .preferences-list li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        /* === STATUSINDIKATOR === */
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .sync-indicator.hidden {
+            opacity: 0;
+        }
+
+        /* === LOADING OCH ERROR STATES === */
+        .loading-state, .error-state {
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .loading-state {
+            color: #2196F3;
+        }
+
+        .error-state {
+            color: #f44336;
+            border: 1px solid #ffcdd2;
+        }
+
+        /* === DEBUG INDICATOR === */
+        .debug-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug indicator som visar att debugging är aktiverat -->
+    <div class="debug-indicator">Debug Mode Active</div>
+    
+    <!-- Root element för React-appen -->
+    <div id="root"></div>
+    
+    <!-- Dold information om tangentkombination för reset -->
+    <!-- Alt + Shift + R för att nollställa databasen -->
+    <div style="display: none;">Reset: Alt + Shift + R</div> 
+    
+    <!-- Här kommer Del 2 placeras -->
+    <script type="text/babel">
+        // Alla React-komponenter och logik kommer här   
+    /*** === REACT COMPONENTS OCH LOGIK === ***/
+// Error Boundary komponent för felhantering på högsta nivån
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+        window.debugLog('ErrorBoundary initialiserad');
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        window.debugLog('Error fångad av ErrorBoundary: ' + error.message);
+        console.error('Error caught by boundary:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="error-state">
+                    <h2>Något gick fel</h2>
+                    <p>Vi kunde inte ladda anmälningsformuläret. Försök ladda om sidan.</p>
+                    <button onClick={() => window.location.reload()}>
+                        Ladda om sidan
+                    </button>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
+// Loading-komponent som visas medan Firebase initialiseras
+const LoadingState = () => (
+    <div className="loading-state">
+        <h2>Laddar anmälningsformulär...</h2>
+        <p>Var god vänta medan vi ansluter till databasen.</p>
+    </div>
+);
+
+// Huvudkomponent för evenemangsregistrering
+const EventRegistration = () => {
+    window.debugLog('EventRegistration komponent initieras');
+
+    // === STATE DECLARATIONS ===
+    const [formData, setFormData] = React.useState({
+        name: '',
+        departureTime: '08:00',
+        boardMeetingTime: '14:00-17:00',
+        boardMeetingPoints: '',
+        saturdaySaunaTime: '17:00-19:00',
+        dinnerTime: '20:00',
+        dinnerLocation: 'Lundgrens Garage',
+        sundaySaunaTime: '08:00-10:00',
+        lunchLocation: 'Arontorp'
+    });
+
+    const [participants, setParticipants] = React.useState([]);
+    const [isSyncing, setIsSyncing] = React.useState(false);
+    const [hasInitialized, setHasInitialized] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+
+    // === TESTDATA FÖR INITIALISERING ===
+    const initialParticipants = [
+        {
+            name: "Kent Lundgren",
+            departureTime: "08:00",
+            boardMeetingTime: "14:00-17:00",
+            boardMeetingPoints: "Framtida strategi\nEkonomisk planering\nMedlemsrekrytering",
+            saturdaySaunaTime: "17:00-19:00",
+            dinnerTime: "20:00",
+            dinnerLocation: "Lundgrens Garage",
+            sundaySaunaTime: "08:00-10:00",
+            lunchLocation: "Arontorp"
+        },
+        {
+            name: "Kalle",
+            departureTime: "08:30",
+            boardMeetingTime: "14:00-17:00",
+            boardMeetingPoints: "Digital närvaro\nSociala aktiviteter\nKommunikationsplan",
+            saturdaySaunaTime: "17:00-19:00",
+            dinnerTime: "20:00",
+            dinnerLocation: "Hotell Borgholm",
+            sundaySaunaTime: "09:00-11:00",
+            lunchLocation: "Arontorp"
+        },
+        {
+            name: "Stina",
+            departureTime: "08:15",
+            boardMeetingTime: "14:00-17:00",
+            boardMeetingPoints: "Hållbarhetsfrågor\nInternationellt samarbete\nUtvecklingsprogram",
+            saturdaySaunaTime: "17:00-19:00",
+            dinnerTime: "20:00",
+            dinnerLocation: "Birk Mat och sällskap",
+            sundaySaunaTime: "08:00-10:00",
+            lunchLocation: "Arontorp"
+        }
+    ];
+
+    // === FIREBASE INITIALIZATION AND LISTENERS ===
+    React.useEffect(() => {
+        window.debugLog('Initierar Firebase lyssnare');
+
+        const handleFirebaseReady = () => {
+            window.debugLog('Firebase redo - startar datasynkronisering');
+            setIsLoading(false);
+            initializeFirebaseListeners();
+        };
+
+        const handleFirebaseError = (event) => {
+            window.debugLog('Firebase fel upptäckt: ' + event.detail.message);
+            setError(event.detail);
+            setIsLoading(false);
+        };
+
+        window.addEventListener('firebaseReady', handleFirebaseReady);
+        window.addEventListener('firebaseError', handleFirebaseError);
+
+        // Cleanup listeners
+        return () => {
+            window.removeEventListener('firebaseReady', handleFirebaseReady);
+            window.removeEventListener('firebaseError', handleFirebaseError);
+        };
+    }, []);
+
+    // === FIREBASE DATA HANDLING ===
+    const initializeFirebaseListeners = () => {
+        try {
+            const participantsRef = window.firebaseRef(window.firebaseDb, 'participants');
+            window.debugLog('Sätter upp databas-lyssnare');
+
+            const unsubscribe = window.firebaseOnValue(participantsRef, (snapshot) => {
+                try {
+                    const data = snapshot.val();
+                    if (data) {
+                        window.debugLog(`Hämtade ${Object.keys(data).length} deltagare från databasen`);
+                        setParticipants(Object.values(data));
+                    } else if (!hasInitialized) {
+                        window.debugLog('Ingen existerande data - lägger till testdeltagare');
+                        initialParticipants.forEach((participant, index) => {
+                            window.firebaseSet(
+                                window.firebaseRef(
+                                    window.firebaseDb,
+                                    `participants/participant${index + 1}`
+                                ),
+                                participant
+                            ).catch(error => {
+                                console.error('Error adding test participant:', error);
+                                window.debugLog('Fel vid tillägg av testdeltagare: ' + error.message);
+                            });
+                        });
+                        setHasInitialized(true);
+                    }
+                    setIsSyncing(false);
+                } catch (error) {
+                    console.error('Error processing database data:', error);
+                    window.debugLog('Fel vid databashantering: ' + error.message);
+                    setError(error);
+                }
+            }, (error) => {
+                console.error('Database subscription error:', error);
+                window.debugLog('Databasfel: ' + error.message);
+                setError(error);
+            });
+
+            // Lägg till tangentlyssnare för nollställning
+            const handleReset = (e) => {
+                if (e.altKey && e.shiftKey && e.key === 'R') {
+                    window.debugLog('Nollställningskommando upptäckt (Alt + Shift + R)');
+                    const confirmReset = window.confirm(
+                        'Är du säker på att du vill nollställa alla anmälningar?'
+                    );
+                    if (confirmReset) {
+                        setIsSyncing(true);
+                        window.debugLog('Påbörjar databas-nollställning');
+                        window.firebaseRemove(participantsRef)
+                            .then(() => {
+                                window.debugLog('Databas-nollställning slutförd');
+                                setIsSyncing(false);
+                            })
+                            .catch((error) => {
+                                console.error('Error resetting database:', error);
+                                window.debugLog('Fel vid databas-nollställning: ' + error.message);
+                                setIsSyncing(false);
+                            });
+                    }
+                }
+            };
+
+            window.addEventListener('keydown', handleReset);
+            return () => {
+                unsubscribe();
+                window.removeEventListener('keydown', handleReset);
+            };
+        } catch (error) {
+            console.error('Error setting up database listeners:', error);
+            window.debugLog('Fel vid uppsättning av databas-lyssnare: ' + error.message);
+            setError(error);
+        }
+    };
+
+    // === FORM HANDLING ===
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        window.debugLog('Formulär inlämnat för: ' + formData.name);
+
+        if (participants.length >= 10) {
+            alert('Tyvärr är alla platser upptagna!');
+            return;
+        }
+
+        try {
+            setIsSyncing(true);
+            const newParticipantRef = window.firebaseRef(
+                window.firebaseDb,
+                `participants/participant${participants.length + 1}`
+            );
+
+            await window.firebaseSet(newParticipantRef, {
+                ...formData,
+                timestamp: new Date().toISOString()
+            });
+
+            window.debugLog('Ny deltagare sparad i databasen');
+
+            // Återställ formuläret
+            setFormData({
+                name: '',
+                departureTime: '08:00',
+                boardMeetingTime: '14:00-17:00',
+                boardMeetingPoints: '',
+                saturdaySaunaTime: '17:00-19:00',
+                dinnerTime: '20:00',
+                dinnerLocation: 'Lundgrens Garage',
+                sundaySaunaTime: '08:00-10:00',
+                lunchLocation: 'Arontorp'
+            });
+        } catch (error) {
+            console.error('Error saving participant:', error);
+            window.debugLog('Fel vid sparande av ny deltagare: ' + error.message);
+            alert('Ett fel uppstod när anmälan skulle sparas. Försök igen.');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
+    // === CONDITIONAL RENDERING ===
+    if (error) {
+        return (
+            <div className="error-state">
+                <h2>Ett fel uppstod</h2>
+                <p>Kunde inte ansluta till databasen. Försök igen senare.</p>
+                <button onClick={() => window.location.reload()}>
+                    Försök igen
+                </button>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return <LoadingState />;
+    }
+
+    // === MAIN RENDER ===
+    return (
+        <div className="container">
+            {/* Anmälningsformulär */}
+            <div className="input-field">
+                <h2>Anmälan till Borgholm 8-9 mars 2024</h2>
+                <p>Version 8 - med realtidsuppdateringar och databaslagring</p>
+                
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>Namn:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Avgångstid från Skåne:</label>
+                        <input
+                            type="time"
+                            name="departureTime"
+                            value={formData.departureTime}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Tid för styrelsemöte:</label>
+                        <input
+                            type="text"
+                            name="boardMeetingTime"
+                            value={formData.boardMeetingTime}
+                            onChange={handleChange}
+                            placeholder="14:00-17:00"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Viktiga punkter för styrelsemötet (max 3):</label>
+                        <textarea
+                            name="boardMeetingPoints"
+                            value={formData.boardMeetingPoints}
+                            onChange={handleChange}
+                            placeholder="Skriv en punkt per rad (max 3 punkter)"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Tid för bastu (lördag):</label>
+                        <input
+                            type="text"
+                            name="saturdaySaunaTime"
+                            value={formData.saturdaySaunaTime}
+                            onChange={handleChange}
+                            placeholder="17:00-19:00"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Tid för middag:</label>
+                        <input
+                            type="time"
+                            name="dinnerTime"
+                            value={formData.dinnerTime}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Plats för middag:</label>
+                        <select
+                            name="dinnerLocation"
+                            value={formData.dinnerLocation}
+                            onChange={handleChange}
+                        >
+                            <option value="Lundgrens Garage">Lundgrens Garage</option>
+                            <option value="Hotell Borgholm">Hotell Borgholm</option>
+                            <option value="Birk Mat och sällskap">Birk Mat och sällskap</option>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label>Tid för bastu (söndag):</label>
+                        <input
+                            type="text"
+                            name="sundaySaunaTime"
+                            value={formData.sundaySaunaTime}
+                            onChange={handleChange}
+                            placeholder="08:00-10:00"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Plats för lunch (söndag):</label>
+                        <input
+                            type="text"
+                            name="lunchLocation"
+                            value={formData.lunchLocation}
+                            onChange={handleChange}
+                            placeholder="Arontorp"
+                        />
+                    </div>
+
+                    <button type="submit">Anmäl</button>
+                </form>
+            </div>
+
+                {/* Lista över anmälda deltagare */}
+            <div className="input-field">
+                <h3>Anmälda deltagare ({participants.length}/10)</h3>
+                {participants.map((p, index) => (
+                    <div key={index} className="participant-card">
+                        <h4>{p.name}</h4>
+                        <ul className="preferences-list">
+                            <li>Avgång från Skåne: {p.departureTime}</li>
+                            <li>Styrelsemöte: {p.boardMeetingTime}</li>
+                            {p.boardMeetingPoints && (
+                                <li>
+                                    Mötespunkter:
+                                    <ul>
+                                        {p.boardMeetingPoints.split('\n')
+                                            .filter(point => point.trim())
+                                            .map((point, i) => (
+                                                <li key={i}>{point}</li>
+                                            ))}
+                                    </ul>
+                                </li>
+                            )}
+                            <li>Bastu lördag: {p.saturdaySaunaTime}</li>
+                            <li>Middag: {p.dinnerTime} på {p.dinnerLocation}</li>
+                            <li>Bastu söndag: {p.sundaySaunaTime}</li>
+                            <li>Lunch söndag: {p.lunchLocation}</li>
+                        </ul>
+                    </div>
+                ))}
+            </div>
+
+            {/* Synkroniseringsindikator */}
+            <div className={`sync-indicator ${isSyncing ? '' : 'hidden'}`}>
+                Sparar ändringar...
+            </div>
+        </div>
+    );
+};
+
+// Montera React-applikationen med Error Boundary
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(
+    <ErrorBoundary>
+        <EventRegistration />
+    </ErrorBoundary>
+);
+    </script>
+</body>
+</html>

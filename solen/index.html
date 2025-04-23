@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solens upp- och nedgång i Sverige</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- SunCalc bibliotek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+    <!-- Chart.js bibliotek -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <!-- Chart.js DataLabels plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <!-- Adapter för datum/tid i Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Solens upp- och nedgång i Sverige</h1>
+        <p>Data för Malmö, Stockholm och Kiruna</p>
+    </header>
+
+    <main>
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h2>Solens upp- och nedgångstider</h2>
+                <canvas id="timeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Dagslängd över året</h2>
+                <canvas id="daylengthChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Tidigaste och senaste soluppgång</h2>
+                <canvas id="sunriseExtremesChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Tidigaste och senaste solnedgång</h2>
+                <canvas id="sunsetExtremesChart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Data beräknad med SunCalc</p>
+    </footer>
+
+    <script>
+        // Enkel felhantering för att se om biblioteken laddats
+        window.addEventListener('load', function() {
+            if (typeof SunCalc === 'undefined') {
+                console.error('SunCalc biblioteket kunde inte laddas');
+                alert('Ett fel uppstod: SunCalc biblioteket kunde inte laddas');
+            }
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js biblioteket kunde inte laddas');
+                alert('Ett fel uppstod: Chart.js biblioteket kunde inte laddas');
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html> 

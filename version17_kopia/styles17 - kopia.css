@@ -1,0 +1,192 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.example-container {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.kontering-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.kontering-table th, .kontering-table td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.kontering-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.kontering-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-column {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"], 
+input[type="number"],
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.activity-section {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.cost-section {
+    border: 2px solid #4CAF50;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button.calculate-monthly {
+    background-color: #2196F3;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 20px 0;
+    display: block;
+    width: 100%;
+}
+
+button.calculate-monthly:hover {
+    background-color: #1976D2;
+}
+
+.info-box {
+    background-color: #e7f3fe;
+    border: 1px solid #b6d4fd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    color: #084298;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+.section-header {
+    color: #2c5282;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 5px;
+    margin: 20px 0 10px 0;
+}
+
+.yearly-monthly-container {
+    display: flex;
+    gap: 15px;
+}
+
+.yearly-monthly-container > div {
+    flex: 1;
+}
+
+.monthly-amount {
+    background-color: #e8f5e9;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.monthly-amount label {
+    color: #2e7d32;
+}
+
+/* Ny styling för återställningsknappen */
+.reset-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.reset-button:hover {
+    transform: scale(1.1);
+}
+
+.reset-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* Animation för beloppsändringar */
+.amount {
+    transition: all 0.3s ease;
+}

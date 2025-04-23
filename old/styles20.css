@@ -1,0 +1,107 @@
+/* ==================== Grundläggande layout ==================== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h1, h2 {
+    color: #2c3e50;
+}
+
+section {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #34495e;
+}
+
+input, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:active {
+    background-color: #1c598a;
+}
+
+/* ==================== Lista över avtal ==================== */
+#contractsList {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+    border-radius: 8px;
+}
+
+.contract-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.contract-item:last-child {
+    border-bottom: none;
+}
+
+.contract-item h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.contract-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* ==================== Responsiv design ==================== */
+@media (max-width: 600px) {
+    section {
+        padding: 15px;
+    }
+
+    input, textarea, button {
+        font-size: 14px;
+    }
+
+    .contract-item h3 {
+        font-size: 16px;
+    }
+
+    .contract-item p {
+        font-size: 12px;
+    }
+}

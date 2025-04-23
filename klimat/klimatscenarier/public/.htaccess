@@ -1,0 +1,7 @@
+# Aktivera rewrite-motorn
+RewriteEngine On
+
+# Om filen eller katalogen inte existerar, omdirigera till index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.html [QSA,L] 

@@ -1,0 +1,167 @@
+/**
+ * Röda Korset - Utbildningsprogram
+ * Huvudstilmall för React-versionen
+ * 
+ * Detta CSS-dokument definierar grundläggande stilar och variabler
+ * som används genomgående i applikationen.
+ */
+
+/* CSS-variabler för färger och typsnitt */
+:root {
+  /* Röda Korsets grafiska profil */
+  --primary-color: #e21815; /* Röda Korset röd */
+  --primary-dark: #b21310;
+  --secondary-color: #2b2b2b;
+  --accent-color: #f8d9d9;
+  --light-gray: #f2f2f2;
+  --dark-gray: #444444;
+  --white: #ffffff;
+  --black: #000000;
+  
+  /* Typografi */
+  --main-font: 'Open Sans', sans-serif;
+  --heading-font: 'Open Sans', sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2.5rem;
+  
+  /* Skuggor */
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+  
+  /* Avrundade hörn */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  
+  /* Övergångar */
+  --transition-speed: 0.3s;
+}
+
+/* Grundläggande reset och inställningar */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--main-font);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--secondary-color);
+  background-color: var(--light-gray);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Typografi */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading-font);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  color: var(--secondary-color);
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  color: var(--primary-color);
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+ul, ol {
+  margin-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+li {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Knappar */
+button {
+  font-family: var(--main-font);
+  cursor: pointer;
+  border: none;
+  transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Hjälpklasser */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Responsiv grund */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  h4 {
+    font-size: 1.1rem;
+  }
+} 

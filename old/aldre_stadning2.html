@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sök Äldre Städavtal</title>
+    <style>
+        /* Grundläggande stilar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .search-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        /* Sökfälts-container */
+        .search-field-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        /* Kombinerad input och select */
+        .combined-input {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .combined-input label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        /* Stil för både input och select */
+        .combined-input input,
+        .combined-input select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .combined-input input:focus,
+        .combined-input select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        /* Knappstilar */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        /* Resultatstilar */
+        .stadavtal-container {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .kontering-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .kontering-table th, 
+        .kontering-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .kontering-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .kontering-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .no-results {
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sök Äldre Städavtal</h1>
+    
+    <div class="search-container">
+        <div class="search-field-container">
+            <div class="combined-input">
+                <label for="objektkod">Objektkod:</label>
+                <input type="text" id="objektkod" placeholder="Skriv eller välj objektkod">
+                <select id="objektkodLista" onchange="updateInput('objektkod', this.value)">
+                    <option value="">Välj från lista...</option>
+                </select>
+            </div>
+            <div class="combined-input">
+                <label for="avtalText">Namn/Text:</label>
+                <input type="text" id="avtalText" placeholder="Skriv eller välj namn">
+                <select id="avtalTextLista" onchange="updateInput('avtalText', this.value)">
+                    <option value="">Välj från lista...</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="sokStadavtal()">Sök</button>
+        <button onclick="rensaSok()" style="background-color: #f44336;">Rensa sökning</button>
+    </div>
+
+    <div id="sokResultat"></div>
+
+    <!-- Inkludera JavaScript-filer med städavtalsdata -->
+    <script src="stadavtal_2a2b.js"></script>
+    <script src="stadavtal_2c2d.js"></script>
+    
+    <script>
+        // Funktion för att populera dropdown-listorna vid sidladdning
+        function initializeDropdowns() {
+            const objektkoder = new Set();
+            const avtalNamn = new Set();
+
+            // Samla data från både 2a2b och 2c2d
+            [stadavtalData2aOch2b, stadavtalData2cOch2d].forEach(dataSource => {
+                Object.values(dataSource).forEach(typData => {
+                    Object.values(typData).forEach(avtal => {
+                        if (avtal.objektkod) objektkoder.add(avtal.objektkod);
+                        avtalNamn.add(avtal.namn.split(' - ')[0]); // Tar första delen av namnet
+                    });
+                });
+            });
+
+            // Populera objektkodlistan
+            const objektkodSelect = document.getElementById('objektkodLista');
+            [...objektkoder].sort().forEach(kod => {
+                const option = document.createElement('option');
+                option.value = kod;
+                option.textContent = kod;
+                objektkodSelect.appendChild(option);
+            });
+
+            // Populera avtalsnamnlistan
+            const avtalSelect = document.getElementById('avtalTextLista');
+            [...avtalNamn].sort().forEach(namn => {
+                const option = document.createElement('option');
+                option.value = namn;
+                option.textContent = namn;
+                avtalSelect.appendChild(option);
+            });
+        }
+
+        // Uppdatera inputfält när något väljs i dropdown
+        function updateInput(inputId, value) {
+            document.getElementById(inputId).value = value;
+        }
+
+        // Sökfunktion som söker i både 2a2b och 2c2d
+        function sokStadavtal() {
+            const objektkod = document.getElementById('objektkod').value.trim();
+            const sokText = document.getElementById('avtalText').value.trim().toLowerCase();
+            
+            let resultat = [];
+            
+            if (objektkod === '' && sokText === '') {
+                visaResultat([]);
+                return;
+            }
+
+            // Funktion för att söka i en datastruktur
+            function sokIData(dataSource) {
+                Object.values(dataSource).forEach(typData => {
+                    Object.entries(typData).forEach(([avtalNr, avtal]) => {
+                        // Matcha på objektkod om angiven
+                        if (objektkod && avtal.objektkod !== objektkod) {
+                            return;
+                        }
+                        
+                        // Matcha på text om angiven
+                        if (sokText && !avtal.namn.toLowerCase().includes(sokText)) {
+                            return;
+                        }
+                        
+                        resultat.push({
+                            avtalNr: avtalNr,
+                            ...avtal
+                        });
+                    });
+                });
+            }
+
+            // Sök i båda datastrukturerna
+            sokIData(stadavtalData2aOch2b);
+            sokIData(stadavtalData2cOch2d);
+            
+            visaResultat(resultat);
+        }
+
+        // Visa sökresultat
+        function visaResultat(resultat) {
+            const container = document.getElementById('sokResultat');
+            
+            if (resultat.length === 0) {
+                container.innerHTML = '<div class="no-results">Inga städavtal hittades med angivna sökkriterier.</div>';
+                return;
+            }
+            
+            let html = '';
+            resultat.forEach(avtal => {
+                html += `
+                    <div class="stadavtal-container">
+                        <h3>Städavtal ${avtal.avtalNr} - ${avtal.namn}</h3>
+                        <p>Objektkod: ${avtal.objektkod || 'Ingen objektkod'}</p>
+                        <table class="kontering-table">
+                            <thead>
+                                <tr>
+                                    <th>Rad</th>
+                                    <th>Konto</th>
+                                    <th>Ansvar</th>
+                                    <th>Verksamhet</th>
+                                    <th>Aktivitet</th>
+                                    <th>Motpart</th>
+                                    <th>Objekt</th>
+                                    <th>Belopp</th>
+                                    <th>Text</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${avtal.rader.map(rad => `
+                                    <tr>
+                                        <td>${rad.rad}</td>
+                                        <td>${rad.konto}</td>
+                                        <td>${rad.ansvar}</td>
+                                        <td>${rad.verksamhet}</td>
+                                        <td>${rad.aktivitet}</td>
+                                        <td>${rad.motpart}</td>
+                                        <td>${rad.objekt || '-'}</td>
+                                        <td style="text-align: right">${rad.belopp.toLocaleString('sv-SE')} kr</td>
+                                        <td>${rad.text}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Rensa sökfält och resultat
+        function rensaSok() {
+            document.getElementById('objektkod').value = '';
+            document.getElementById('objektkodLista').selectedIndex = 0;
+            document.getElementById('avtalText').value = '';
+            document.getElementById('avtalTextLista').selectedIndex = 0;
+            document.getElementById('sokResultat').innerHTML = '';
+        }
+
+        // Initialisera dropdowns när sidan laddas
+        document.addEventListener('DOMContentLoaded', initializeDropdowns);
+    </script>
+</body>
+</html>

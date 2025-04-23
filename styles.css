@@ -1,0 +1,320 @@
+/* ===========================================
+   STILMALL FÖR WEBBUTVECKLINGSSIDA
+   ===========================================
+   Denna CSS-fil definierar utseendet för webbsidan om modern webbutveckling.
+   För att använda denna fil, länka den i HTML-dokumentets head-sektion med:
+   <link rel="stylesheet" href="styles.css">
+
+   INNEHÅLLSFÖRTECKNING:
+   1. Grundläggande sidlayout
+   2. Header-sektion
+   3. Länkar och navigation
+   4. Huvudinnehåll
+   5. Specialsektioner
+   6. Rubriker
+   7. Sidfot
+   8. "Läs mer"-länkar
+*/
+
+/* ===========================================
+   1. GRUNDLÄGGANDE SIDLAYOUT 
+   =========================================== */
+/* Body-elementet definierar grundläggande stil för hela sidan
+   - max-width: begränsar sidbredden för bättre läsbarhet
+   - margin: 0 auto: centrerar innehållet horisontellt
+   - padding: skapar utrymme runt innehållet
+   - background-color: ljusgrå bakgrund för bättre kontrast */
+body { 
+    font-family: 'Georgia', serif; 
+    line-height: 1.6;         /* Radavstånd för bättre läsbarhet */
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    background-color: #f5f5f5; 
+    color: #333; 
+} 
+
+/* ===========================================
+   2. HEADER-SEKTION 
+   =========================================== */
+/* Header måste finnas i HTML-koden som <header>
+   Exempel på HTML-struktur:
+   <header>
+       <h1>Din rubrik här</h1>
+   </header>
+   
+   Flexbox används för centrering:
+   - display: flex + align-items + justify-content: centrerar vertikalt och horisontellt
+   - flex-direction: column: staplar innehåll vertikalt */
+header { 
+    text-align: center; 
+    margin-bottom: 30px;    
+    padding: 10px 20px;     
+    background-color: #1a237e; 
+    color: white; 
+    border-radius: 10px;     /* Rundade hörn */
+    min-height: 60px;       
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;  
+    width: 100%;            
+    box-sizing: border-box; /* Inkluderar padding i bredden */
+}
+
+/* Huvudrubrik i header
+   - margin: 0: tar bort standardmarginaler
+   - width: 100%: täcker hela bredden för korrekt centrering */
+header h1 {
+    margin: 0;             
+    padding: 5px 0;        
+    font-size: 1.5em;      
+    text-align: center;    
+    width: 100%;           
+}
+
+/* Ljudspelare i header */
+.audio-player {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.audio-player audio {
+    height: 30px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sound-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.sound-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===========================================
+   3. LÄNKAR OCH NAVIGATION 
+   =========================================== */
+/* Länksektion kräver element med class="calculator-links"
+   Exempel:
+   <div class="calculator-links">
+       <a href="#">Länk 1</a>
+   </div> */
+.calculator-links { 
+    background-color: white; 
+    padding: 20px; 
+    border-radius: 10px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtil skugga */
+    margin-bottom: 30px; 
+} 
+
+/* Styling för individuella länkar */
+.calculator-links a { 
+    display: block;         /* Varje länk på egen rad */
+    padding: 10px; 
+    margin: 10px 0; 
+    background-color: #e3f2fd; 
+    color: #1a237e; 
+    text-decoration: none;  /* Tar bort understrykning */
+    border-radius: 5px; 
+    transition: background-color 0.3s; /* Mjuk övergång vid hover */
+} 
+
+/* För att möjliggöra att länkar visas på samma rad */
+.inline-links a {
+    display: inline-block;  /* Tillåter länkar på samma rad */
+    margin-right: 10px;     /* Avstånd mellan länkar på samma rad */
+}
+
+/* För att gruppera länkar på samma rad */
+.link-group {
+    display: flex;          /* Använder flexbox för länkar */
+    align-items: center;    /* Centrerar vertikalt */
+    flex-wrap: wrap;        /* Tillåter radbyte vid behov */
+}
+
+.link-group a {
+    margin-right: 10px;     /* Avstånd mellan länkar i gruppen */
+    display: inline-block;  /* Överskriver block från .calculator-links a */
+}
+
+/* För att hantera klassen link-group i listor */
+li.link-group {
+    list-style: disc;      /* Behåller punktmarkeringen i listan */
+    padding-left: 0;       /* Ta bort extra padding */
+    margin: 10px 0;        /* Behåller marginal som andra list-element */
+    display: flex;         /* Använder flexbox för länkraden */
+    align-items: center;   /* Centrerar vertikalt */
+    flex-wrap: wrap;       /* Tillåter radbyte vid behov */
+}
+
+/* Styling för länkar i list-element med link-group */
+.calculator-links li.link-group a {
+    display: inline-block;  /* Gör länkarna inline istället för block */
+    margin: 0 10px 0 0;     /* Endast margin till höger */
+}
+
+/* Hover-effekt för länkar */
+.calculator-links a:hover { 
+    background-color: #bbdefb; 
+} 
+
+/* Framhävt listelement för att dra uppmärksamhet */
+.calculator-links .highlighted-item a {
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+.calculator-links .highlighted-item a:hover {
+    background-color: #c8e6c9;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+/* ===========================================
+   4. HUVUDINNEHÅLL 
+   =========================================== */
+/* Huvudsektionen kräver element med class="ai-section"
+   Exempel:
+   <div class="ai-section">
+       <p>Ditt innehåll här</p>
+   </div> */
+.ai-section { 
+    background-color: white; 
+    padding: 20px; 
+    border-radius: 10px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    margin-bottom: 30px; 
+} 
+
+/* ===========================================
+   5. SPECIALSEKTIONER 
+   =========================================== */
+/* Diktsektion kräver element med class="poem"
+   Används för särskilt formaterad text */
+.poem { 
+    font-style: italic; 
+    padding: 20px; 
+    background-color: #e8eaf6; 
+    border-radius: 10px; 
+    margin-top: 30px; 
+} 
+
+/* Meddelanderuta för viktiga upplysningar */
+.announcement {
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.announcement h3 {
+    color: #2e7d32;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.announcement p {
+    margin: 0;
+}
+
+.announcement a {
+    color: #1a237e;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.announcement a:hover {
+    color: #3949ab;
+    text-decoration: underline;
+}
+
+/* ===========================================
+   6. RUBRIKER 
+   =========================================== */
+/* Gemensam styling för huvudrubriker */
+h1, h2 { 
+    color: #1a237e; 
+}
+
+/* ===========================================
+   7. SIDFOT 
+   =========================================== */
+/* Footer-element måste finnas i HTML som <footer>
+   Exempel:
+   <footer>
+       <p>Copyright information</p>
+   </footer> */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: #1a237e;
+    color: white;
+    border-radius: 10px;
+}
+
+/* Footer-länkar */
+footer a {
+    color: white;
+    text-decoration: underline;
+}
+
+/* ===========================================
+   8. "LÄS MER"-LÄNKAR 
+   =========================================== */
+/* Särskild styling för "läs mer"-länkar
+   Kräver element med class="read-more-link" */
+.read-more-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #1a237e;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+/* Hover-effekt för läs mer-länkar */
+.read-more-link:hover {
+    background-color: #283593;
+}
+
+/* ===========================================
+   MEDIA QUERIES FÖR RESPONSIV DESIGN
+   =========================================== */
+/* Anpassningar för mindre skärmar */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    header {
+        padding: 5px 10px;
+    }
+    
+    .calculator-links a {
+        margin: 5px 0;
+    }
+}

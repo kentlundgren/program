@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Röda Korset - Utbildningsprogram</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="../testprogram/rodakorset/bilder/rodakorset-logo.png" alt="Röda Korset Logo" class="logo" onerror="this.src='https://www.rodakorset.se/globalassets/rodakorset.se/bilder/icons/red-cross-emblem-transp.svg'">
+            <h1>Röda Korset - Utbildningsmaterial</h1>
+        </div>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>Välj version av utbildningsprogrammet</h2>
+            <p>Här kan du välja mellan två olika implementationer av Röda Korsets utbildningsprogram. Båda versionerna innehåller 5 flikar: Uppgiftsbeskrivning, Tips, Visualisering, Quiz och Lösning.</p>
+        </section>
+
+        <section class="programs-container">
+            <div class="program-card">
+                <div class="program-header">
+                    <h3>Version 1</h3>
+                    <img src="bilder/rodakorset1.jpg" alt="Röda Korset Version 1" class="program-image" id="version1-img">
+                </div>
+                <div class="program-body">
+                    <p>Ett utbildningsprogram som utgår från Röda Korsets verksamhet med 5 flikar för en svensk gymnasie- eller universitetsuppgift.</p>
+                    
+                    <div class="prompt-info">
+                        <p>Denna version började med en kortare prompt.</p>
+                        <a href="#" id="showPrompt1" class="btn-link">Visa prompten</a>
+                    </div>
+                    
+                    <ul>
+                        <li>Uppgiftsbeskrivning</li>
+                        <li>Tips</li>
+                        <li>Visualisering</li>
+                        <li>Quiz med 3 frågor</li>
+                        <li>Lösning (visas efter godkänt quiz)</li>
+                    </ul>
+                    <div class="implementation-info">
+                        <p><strong>Implementationer:</strong></p>
+                        <div class="implementation-buttons">
+                            <a href="https://kentlundgren.se/program/testprogram/rodakorset3/" class="btn btn-primary" target="_blank">Öppna version 1</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="program-card">
+                <div class="program-header">
+                    <h3>Version 2</h3>
+                    <img src="bilder/rodakorset2.jpg" alt="Röda Korset Version 2" class="program-image" id="version2-img">
+                </div>
+                <div class="program-body">
+                    <p>Ett utbildningsprogram som utgår från Röda Korsets verksamhet med 5 flikar för en svensk gymnasie- eller universitetsuppgift.</p>
+                    
+                    <div class="prompt-info">
+                        <p>Denna version började med en längre prompt.</p>
+                        <a href="#" id="showPrompt2" class="btn-link">Visa prompten</a>
+                    </div>
+                    
+                    <ul>
+                        <li>Uppgiftsbeskrivning</li>
+                        <li>Tips</li>
+                        <li>Visualisering</li>
+                        <li>Quiz med 3 frågor</li>
+                        <li>Lösning (visas efter godkänt quiz)</li>
+                    </ul>
+                    <div class="implementation-info">
+                        <p><strong>Implementationer:</strong></p>
+                        <div class="implementation-buttons">
+                            <a href="https://kentlundgren.se/program/testprogram/rodakorset2/" class="btn btn-primary" target="_blank">Öppna version 2</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modal-title">Prompt</h2>
+                <div id="modal-body">
+                    <!-- Prompt text will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Kent Lundgren. Alla rättigheter förbehållna.</p>
+        <p>
+            <a href="https://www.rodakorset.se/" target="_blank">Röda Korset</a> |
+            <a href="https://react.dev/" target="_blank">React</a> |
+            <a href="https://vitejs.dev/" target="_blank">Vite</a>
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 

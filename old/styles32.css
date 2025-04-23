@@ -1,0 +1,593 @@
+/* ==================== DEL 1 BÖRJAR ==================== */
+
+/* ==================== Grundläggande variabler ==================== */
+:root {
+    /* Färgpalett */
+    --primary-color: #4CAF50;
+    --primary-dark: #388E3C;
+    --primary-light: #C8E6C9;
+    --secondary-color: #2196F3;
+    --warning-color: #FFA000;
+    --error-color: #D32F2F;
+    --success-color: #388E3C;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --background-primary: #ffffff;
+    --background-secondary: #f5f5f5;
+    --border-color: #E0E0E0;
+
+    /* Spacing och storlekar */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Typografi */
+    --font-family-base: Arial, sans-serif;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+    
+    /* Layout */
+    --max-width: 1400px;
+    --border-radius: 4px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== Reset och grundläggande stilar ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--background-secondary);
+    padding: var(--spacing-md);
+}
+
+/* ==================== Layout och container ==================== */
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    background-color: var(--background-primary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+/* Header och navigering */
+header {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.nav-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: var(--primary-light);
+}
+
+/* ==================== Informationssektion ==================== */
+.info-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.info-box {
+    background-color: var(--primary-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--primary-color);
+}
+
+.info-box h3 {
+    color: var(--primary-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.info-box ul {
+    list-style-position: inside;
+    margin-bottom: var(--spacing-md);
+}
+
+.dimensions-info {
+    background-color: var(--background-primary);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+}
+
+.column-list {
+    columns: 2;
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.column-list li {
+    margin-bottom: var(--spacing-xs);
+    break-inside: avoid;
+}
+
+/* ==================== Formulärstyling ==================== */
+.form-section {
+    margin-bottom: var(--spacing-xl);
+    background-color: var(--background-primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-row {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.form-column {
+    flex: 1;
+}
+
+/* Labels */
+label {
+    display: block;
+    font-weight: bold;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Inputs och Select */
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* Period-sektion */
+.period-section {
+    background-color: var(--background-secondary);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.period-section input {
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+/* Hjälptext */
+.help-text {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+/* ==================== Knappar ==================== */
+.button {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.submit-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.submit-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.reset-button {
+    background-color: var(--text-secondary);
+    color: white;
+}
+
+.reset-button:hover {
+    background-color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.calculate-button {
+    background-color: var(--secondary-color);
+    color: white;
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+/* ==================== Aktivitetssektioner ==================== */
+.activity-section {
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    background-color: var(--background-primary);
+}
+
+.activity-section h4 {
+    color: var(--primary-dark);
+    margin-bottom: var(--spacing-md);
+}
+
+.amount-input {
+    text-align: right;
+    font-family: monospace;
+}
+
+.split-option {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background-color: var(--background-secondary);
+    border-radius: var(--border-radius);
+}
+
+/* ==================== Responsiv design bas ==================== */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .column-list {
+        columns: 1;
+    }
+
+    .container {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* ==================== DEL 1 SLUTAR ==================== */
+/* ==================== DEL 2 BÖRJAR ==================== */
+
+/* ==================== Dropdown med frekvensindikator ==================== */
+.select-with-frequency option {
+    padding: var(--spacing-sm) var(--spacing-md);
+    line-height: 1.5;
+}
+
+.select-with-frequency option[data-frequency]::after {
+    content: attr(data-frequency);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-left: var(--spacing-sm);
+    font-style: italic;
+}
+
+/* ==================== Sökförslag och Autocomplete ==================== */
+.suggestions-container {
+    position: relative;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--background-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: var(--box-shadow);
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions-list.active {
+    display: block;
+}
+
+.suggestion-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: var(--primary-light);
+}
+
+.suggestion-text {
+    font-weight: bold;
+}
+
+.suggestion-details {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xs);
+}
+
+/* ==================== Popup-dialoger ==================== */
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.popup-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup {
+    background-color: var(--background-primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    width: 500px;
+    position: relative;
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.popup.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.popup-close {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background: none;
+    border: none;
+    font-size: var(--font-size-xl);
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.popup-close:hover {
+    color: var(--error-color);
+}
+
+/* Olika popup-typer */
+.popup-warning {
+    border-left: 4px solid var(--warning-color);
+}
+
+.popup-error {
+    border-left: 4px solid var(--error-color);
+}
+
+.popup-success {
+    border-left: 4px solid var(--success-color);
+}
+
+/* ==================== Beloppsuppdelning ==================== */
+.split-amounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background-color: var(--background-primary);
+    border-radius: var(--border-radius);
+}
+
+.split-amount {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--primary-light);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+}
+
+.split-amount-remove {
+    margin-left: var(--spacing-xs);
+    cursor: pointer;
+    color: var(--error-color);
+}
+
+/* ==================== Animationer ==================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Animerade element */
+.form-error {
+    animation: shake 0.5s ease-in-out;
+}
+
+.new-contract {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.suggestion-appear {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* ==================== Avancerad responsiv design ==================== */
+@media (max-width: 1024px) {
+    .form-section {
+        padding: var(--spacing-md);
+    }
+
+    .suggestions-list {
+        max-height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .popup {
+        width: 95%;
+        margin: var(--spacing-sm);
+    }
+
+    .split-amounts {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .suggestion-details {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .popup {
+        padding: var(--spacing-md);
+    }
+}
+
+/* ==================== Tillgänglighetsförbättringar ==================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+.screen-reader-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* ==================== Utskriftsanpassning ==================== */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .container {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    input, select, textarea {
+        border: 1px solid #999;
+    }
+}
+
+/* ==================== Hjälpklasser ==================== */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mt-4 { margin-top: var(--spacing-xl); }
+
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+.mb-4 { margin-bottom: var(--spacing-xl); }
+
+.hidden { display: none !important; }
+.invisible { visibility: hidden !important; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: var(--spacing-sm); }
+.gap-2 { gap: var(--spacing-md); }
+
+/* ==================== DEL 2 SLUTAR ==================== */

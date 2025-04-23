@@ -1,0 +1,79 @@
+/* Fil: Solution.css */
+/* Styling för lösningsfliken */
+
+.solution-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.solution-step {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.solution-step h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.solution-step ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.solution-step li {
+  margin: 5px 0;
+}
+
+.solution-step p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.formula {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-family: 'Times New Roman', serif;
+  font-style: italic;
+}
+
+.solution-summary {
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.solution-summary h3 {
+  color: #1565c0;
+  margin-top: 0;
+}
+
+.solution-summary p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+  .solution-container {
+    padding: 10px;
+  }
+  
+  .solution-step {
+    padding: 15px;
+  }
+  
+  .formula {
+    padding: 10px;
+    font-size: 0.9em;
+  }
+} 

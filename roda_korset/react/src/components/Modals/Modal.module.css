@@ -1,0 +1,209 @@
+/**
+ * CSS-modul för Modal-komponenter
+ * Version: 1.0.0
+ * 
+ * Denna fil innehåller stilar för alla modal-komponenter i applikationen,
+ * inklusive specialanpassade stilar för att visa markdown-innehåll korrekt.
+ */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modalContent {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.modalHeader {
+  padding: 15px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  line-height: 1;
+}
+
+.modalBody {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(90vh - 60px);
+}
+
+/* Stilar för markdown innehåll */
+.markdownContainer {
+  font-family: var(--font-family);
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.markdownContainer h1 {
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.markdownContainer h2 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.markdownContainer h3 {
+  font-size: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary-dark);
+}
+
+.markdownContainer p {
+  margin-bottom: 1rem;
+}
+
+.markdownContainer ul,
+.markdownContainer ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdownContainer li {
+  margin-bottom: 0.5rem;
+}
+
+.markdownContainer a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.markdownContainer a:hover {
+  text-decoration: underline;
+}
+
+.markdownContainer blockquote {
+  border-left: 4px solid var(--border-color);
+  padding-left: 1rem;
+  margin-left: 0;
+  color: var(--text-light);
+}
+
+.markdownContainer code {
+  font-family: monospace;
+  background-color: var(--bg-light);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.markdownContainer pre {
+  background-color: var(--bg-dark);
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.markdownContainer pre code {
+  background-color: transparent;
+  padding: 0;
+  color: var(--white);
+}
+
+.noteContainer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: var(--bg-light);
+  border-radius: 5px;
+  border-left: 4px solid var(--accent-color);
+}
+
+.note {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+/* Responsiva justeringar */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+  }
+  
+  .modalHeader h2 {
+    font-size: 1.3rem;
+  }
+  
+  .markdownContainer h1 {
+    font-size: 1.7rem;
+  }
+  
+  .markdownContainer h2 {
+    font-size: 1.3rem;
+  }
+  
+  .markdownContainer h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .modalContent {
+    width: 100%;
+    max-height: 95vh;
+  }
+  
+  .modalBody {
+    padding: 15px;
+  }
+  
+  .modalHeader {
+    padding: 12px 15px;
+  }
+  
+  .markdownContainer h1 {
+    font-size: 1.5rem;
+  }
+  
+  .markdownContainer h2 {
+    font-size: 1.2rem;
+  }
+} 

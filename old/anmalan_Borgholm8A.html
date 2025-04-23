@@ -1,0 +1,335 @@
+ <!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borgholm Event Registration - Version 8</title>
+
+    <!-- React och ReactDOM via CDN för HTML-kompatibilitet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+    <style>
+        /* Grundläggande styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Loading och Error states */
+        .loading-state, .error-state {
+            text-align: center;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .loading-state {
+            color: #2196F3;
+        }
+
+        .error-state {
+            color: #f44336;
+            border: 1px solid #ffcdd2;
+        }
+
+        /* Formulär och input styling */
+        .input-field {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        .sync-indicator.hidden {
+            opacity: 0;
+        }
+
+        /* Övrig styling behålls som tidigare... */
+    </style>
+</head>
+<body>
+    <!-- Root element för React-appen -->
+    <div id="root"></div>
+
+    <!-- Firebase configuration och initialisering -->
+    <script type="module">
+        // Importera Firebase-funktioner
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        // Vänta tills DOM är redo
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Firebase configuration - ERSÄTT MED DIN EGEN KONFIGURATION  
+                
+                  //Firebase Config 
+                //  const firebaseConfig = {
+                //   apiKey: "YOUR_API_KEY",
+                //   authDomain: "YOUR_AUTH_DOMAIN",
+                //   databaseURL: "YOUR_DATABASE_URL",
+                //   projectId: "YOUR_PROJECT_ID",
+                //   storageBucket: "YOUR_STORAGE_BUCKET",
+                //  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+                //   appId: "YOUR_APP_ID" 
+                
+              //  };         
+              
+                 <script type="module">
+                 // Import the functions you need from the SDKs you need
+                  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+                   // TODO: Add SDKs for Firebase products that you want to use
+                   // https://firebase.google.com/docs/web/setup#available-libraries
+
+                   // Your web app's Firebase configuration
+                   const firebaseConfig = {
+                     apiKey: "AIzaSyDCbsFdT8up5b_niUzFh9jLP6Lhhj8UFFk",
+                       authDomain: "borgholm-registration.firebaseapp.com",
+                        databaseURL: "https://borgholm-registration-default-rtdb.europe-west1.firebasedatabase.app",
+                         projectId: "borgholm-registration",
+                           storageBucket: "borgholm-registration.firebasestorage.app",
+                             messagingSenderId: "203337885231",
+                               appId: "1:203337885231:web:30fdc40a452f46040348da"
+                                };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
+
+              
+
+                // Initialisera Firebase
+                const app = initializeApp(firebaseConfig);
+                const db = getDatabase(app);
+
+                // Gör Firebase tillgängligt globalt
+                window.firebaseDb = db;
+                window.firebaseRef = ref;
+                window.firebaseSet = set;
+                window.firebaseOnValue = onValue;
+                window.firebaseRemove = remove;
+
+                // Signalera att Firebase är redo
+                window.dispatchEvent(new Event('firebaseReady'));
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                window.dispatchEvent(new CustomEvent('firebaseError', { detail: error }));
+            }
+        });
+    </script>
+
+    <!-- React application -->
+    <script type="text/babel">
+        // Error Boundary komponent för felhantering
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false, error: null };
+            }
+
+            static getDerivedStateFromError(error) {
+                return { hasError: true, error };
+            }
+
+            componentDidCatch(error, errorInfo) {
+                console.error('Error caught by boundary:', error, errorInfo);
+            }
+
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="error-state">
+                            <h2>Något gick fel</h2>
+                            <p>Vi kunde inte ladda anmälningsformuläret. Försök ladda om sidan.</p>
+                            <button onClick={() => window.location.reload()}>
+                                Ladda om sidan
+                            </button>
+                        </div>
+                    );
+                }
+
+                return this.props.children;
+            }
+        }
+
+        // Loading komponent
+        const LoadingState = () => (
+            <div className="loading-state">
+                <h2>Laddar anmälningsformulär...</h2>
+                <p>Var god vänta medan vi ansluter till databasen.</p>
+            </div>
+        );
+
+        // Huvudkomponent för evenemangsregistrering
+        const EventRegistration = () => {
+            // State för deltagare och UI-states
+            const [participants, setParticipants] = React.useState([]);
+            const [isSyncing, setIsSyncing] = React.useState(false);
+            const [hasInitialized, setHasInitialized] = React.useState(false);
+            const [isLoading, setIsLoading] = React.useState(true);
+            const [error, setError] = React.useState(null);
+
+            // Testdeltagare för första initialisering
+            const initialParticipants = [
+                {
+                    name: "Kent Lundgren",
+                    departureTime: "08:00",
+                    boardMeetingTime: "14:00-17:00",
+                    boardMeetingPoints: "Punkt 1\nPunkt 2\nPunkt 3",
+                    saturdaySaunaTime: "17:00-19:00",
+                    dinnerTime: "20:00",
+                    dinnerLocation: "Lundgrens Garage",
+                    sundaySaunaTime: "08:00-10:00",
+                    lunchLocation: "Arontorp"
+                },
+                {
+                    name: "Kalle",
+                    // ... samma struktur som ovan
+                },
+                {
+                    name: "Stina",
+                    // ... samma struktur som ovan
+                }
+            ];
+
+            // Vänta på Firebase-initialisering
+            React.useEffect(() => {
+                const handleFirebaseReady = () => {
+                    setIsLoading(false);
+                    initializeFirebaseListeners();
+                };
+
+                const handleFirebaseError = (event) => {
+                    setError(event.detail);
+                    setIsLoading(false);
+                };
+
+                window.addEventListener('firebaseReady', handleFirebaseReady);
+                window.addEventListener('firebaseError', handleFirebaseError);
+
+                return () => {
+                    window.removeEventListener('firebaseReady', handleFirebaseReady);
+                    window.removeEventListener('firebaseError', handleFirebaseError);
+                };
+            }, []);
+
+            // Initialisera Firebase-lyssnare
+            const initializeFirebaseListeners = () => {
+                try {
+                    const participantsRef = window.firebaseRef(window.firebaseDb, 'participants');
+                    
+                    // Lyssna på databasändringar
+                    const unsubscribe = window.firebaseOnValue(participantsRef, (snapshot) => {
+                        try {
+                            const data = snapshot.val();
+                            if (data) {
+                                setParticipants(Object.values(data));
+                            } else if (!hasInitialized) {
+                                // Lägg till testdata om databasen är tom
+                                initialParticipants.forEach((participant, index) => {
+                                    window.firebaseSet(
+                                        window.firebaseRef(
+                                            window.firebaseDb,
+                                            `participants/participant${index + 1}`
+                                        ),
+                                        participant
+                                    ).catch(error => {
+                                        console.error('Error adding test participant:', error);
+                                    });
+                                });
+                                setHasInitialized(true);
+                            }
+                            setIsSyncing(false);
+                        } catch (error) {
+                            console.error('Error processing database data:', error);
+                            setError(error);
+                        }
+                    }, (error) => {
+                        console.error('Database subscription error:', error);
+                        setError(error);
+                    });
+
+                    return () => unsubscribe();
+                } catch (error) {
+                    console.error('Error setting up database listeners:', error);
+                    setError(error);
+                }
+            };
+
+            // Formulärhantering och övrig logik fortsätter här...
+            // [Resten av EventRegistration-komponenten...]
+
+            if (error) {
+                return (
+                    <div className="error-state">
+                        <h2>Ett fel uppstod</h2>
+                        <p>Kunde inte ansluta till databasen. Försök igen senare.</p>
+                        <button onClick={() => window.location.reload()}>
+                            Försök igen
+                        </button>
+                    </div>
+                );
+            }
+
+            if (isLoading) {
+                return <LoadingState />;
+            }
+
+            return (
+                <div className="container">
+                    {/* Formulär och deltagarlista här */}
+                    <div className={`sync-indicator ${isSyncing ? '' : 'hidden'}`}>
+                        Sparar ändringar...
+                    </div>
+                </div>
+            );
+        };
+
+        // Montera React-applikationen med Error Boundary
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(
+            <ErrorBoundary>
+                <EventRegistration />
+            </ErrorBoundary>
+        );
+    </script>
+</body>
+</html>

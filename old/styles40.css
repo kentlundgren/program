@@ -1,0 +1,243 @@
+/* Grundläggande stilar */
+:root {
+    --primary-color: #2c5282;
+    --secondary-color: #4CAF50;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --success-color: #27ae60;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+}
+
+/* Rubriker och text */
+h1 {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--secondary-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.header-links {
+    margin-bottom: 20px;
+}
+
+.header-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+/* Container stilar */
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 20px;
+}
+
+/* Formulärstilar */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-column {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 16px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Period-sektion */
+.period-section {
+    background-color: #e3f2fd;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+}
+
+/* Aktivitetssektioner */
+.activity-section {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+}
+
+.yearly-monthly-container {
+    display: flex;
+    gap: 20px;
+}
+
+.monthly-amount {
+    background-color: #e8f5e9;
+    padding: 15px;
+    border-radius: var(--border-radius);
+}
+
+/* Rekommendationer */
+.rekommendationer-box {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-top: 10px;
+}
+
+.rekommendation-item {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-left: 3px solid var(--secondary-color);
+    border-radius: 4px;
+}
+
+/* Feedback och alerts */
+.alert {
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: var(--success-color);
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: var(--warning-color);
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: var(--danger-color);
+}
+
+/* Knappar */
+button {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #388e3c;
+    transform: translateY(-1px);
+}
+
+.calculate-monthly {
+    width: 100%;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+/* Tabeller */
+.full-width-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Kontrakt-lista */
+.contract-item {
+    margin-bottom: 20px;
+}
+
+.contract-item .card {
+    box-shadow: var(--box-shadow);
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .yearly-monthly-container {
+        flex-direction: column;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}
+
+/* Tillgänglighet */
+:focus {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+/* Animationer */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.contract-item {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Nu är css filen slut */

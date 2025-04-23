@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sök Äldre Städavtal</title>
+    <!-- React CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <!-- Babel för JSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+    <!-- Städavtalsdata -->
+    <script src="stadavtal_2a2b.js"></script>
+    <script src="stadavtal_2c2d.js"></script>
+    <style>
+        /* Samma stilar som tidigare */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .search-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .search-field-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .combined-input {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .combined-input label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .combined-input input,
+        .combined-input select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .combined-input input:focus,
+        .combined-input select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .stadavtal-container {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .kontering-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .kontering-table th, 
+        .kontering-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .kontering-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .kontering-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .no-results {
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Huvudkomponent för appen
+        function StadavtalApp() {
+            // State för sökfält och resultat
+            const [objektkod, setObjektkod] = React.useState('');
+            const [avtalText, setAvtalText] = React.useState('');
+            const [sokResultat, setSokResultat] = React.useState([]);
+
+            // Samla alla unika objektkoder och avtalsnamn
+            const allData = React.useMemo(() => {
+                const data = {
+                    objektkoder: new Set(),
+                    avtalNamn: new Set(),
+                    avtalsMap: new Map() // Mapping mellan objektkod och avtalsnamn
+                };
+
+                // Funktion för att processa data från båda källorna
+                const processData = (source) => {
+                    Object.values(source).forEach(typData => {
+                        Object.values(typData).forEach(avtal => {
+                            if (avtal.objektkod) {
+                                data.objektkoder.add(avtal.objektkod);
+                                data.avtalsMap.set(avtal.objektkod, avtal.namn.split(' - ')[0]);
+                            }
+                            data.avtalNamn.add(avtal.namn.split(' - ')[0]);
+                            data.avtalsMap.set(avtal.namn.split(' - ')[0], avtal.objektkod);
+                        });
+                    });
+                };
+
+                processData(window.stadavtalData2aOch2b);
+                processData(window.stadavtalData2cOch2d);
+
+                return {
+                    objektkoder: [...data.objektkoder].sort(),
+                    avtalNamn: [...data.avtalNamn].sort(),
+                    avtalsMap: data.avtalsMap
+                };
+            }, []);
+
+            // Hantera ändringar i objektkodsfältet
+            const handleObjektkodChange = (value) => {
+                setObjektkod(value);
+                if (allData.avtalsMap.has(value)) {
+                    setAvtalText(allData.avtalsMap.get(value));
+                }
+                sokAvtal(value, avtalText);
+            };
+
+            // Hantera ändringar i avtalstextfältet
+            const handleAvtalTextChange = (value) => {
+                setAvtalText(value);
+                if (allData.avtalsMap.has(value)) {
+                    setObjektkod(allData.avtalsMap.get(value));
+                }
+                sokAvtal(objektkod, value);
+            };
+
+            // Sökfunktion
+            const sokAvtal = (objektkodValue, textValue) => {
+                let resultat = [];
+
+                const sokIData = (dataSource) => {
+                    Object.values(dataSource).forEach(typData => {
+                        Object.entries(typData).forEach(([avtalNr, avtal]) => {
+                            if ((objektkodValue && avtal.objektkod !== objektkodValue) ||
+                                (textValue && !avtal.namn.toLowerCase().includes(textValue.toLowerCase()))) {
+                                return;
+                            }
+                            resultat.push({ avtalNr, ...avtal });
+                        });
+                    });
+                };
+
+                sokIData(window.stadavtalData2aOch2b);
+                sokIData(window.stadavtalData2cOch2d);
+                setSokResultat(resultat);
+            };
+
+            // Rensa sökning
+            const rensaSok = () => {
+                setObjektkod('');
+                setAvtalText('');
+                setSokResultat([]);
+            };
+
+            return (
+                <div>
+                    <h1>Sök Äldre Städavtal</h1>
+                    
+                    <div className="search-container">
+                        <div className="search-field-container">
+                            <div className="combined-input">
+                                <label htmlFor="objektkod">Objektkod:</label>
+                                <input
+                                    type="text"
+                                    id="objektkod"
+                                    value={objektkod}
+                                    onChange={(e) => handleObjektkodChange(e.target.value)}
+                                    placeholder="Skriv eller välj objektkod"
+                                />
+                                <select 
+                                    value={objektkod}
+                                    onChange={(e) => handleObjektkodChange(e.target.value)}>
+                                    <option value="">Välj från lista...</option>
+                                    {allData.objektkoder.map(kod => (
+                                        <option key={kod} value={kod}>{kod}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="combined-input">
+                                <label htmlFor="avtalText">Namn/Text:</label>
+                                <input
+                                    type="text"
+                                    id="avtalText"
+                                    value={avtalText}
+                                    onChange={(e) => handleAvtalTextChange(e.target.value)}
+                                    placeholder="Skriv eller välj namn"
+                                />
+                                <select 
+                                    value={avtalText}
+                                    onChange={(e) => handleAvtalTextChange(e.target.value)}>
+                                    <option value="">Välj från lista...</option>
+                                    {allData.avtalNamn.map(namn => (
+                                        <option key={namn} value={namn}>{namn}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button onClick={() => sokAvtal(objektkod, avtalText)}>Sök</button>
+                        <button onClick={rensaSok} style={{backgroundColor: '#f44336'}}>
+                            Rensa sökning
+                        </button>
+                    </div>
+
+                    <div>
+                        {sokResultat.length === 0 ? (
+                            <div className="no-results">
+                                Inga städavtal hittades med angivna sökkriterier.
+                            </div>
+                        ) : (
+                            sokResultat.map(avtal => (
+                                <div key={avtal.avtalNr} className="stadavtal-container">
+                                    <h3>Städavtal {avtal.avtalNr} - {avtal.namn}</h3>
+                                    <p>Objektkod: {avtal.objektkod || 'Ingen objektkod'}</p>
+                                    <table className="kontering-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Rad</th>
+                                                <th>Konto</th>
+                                                <th>Ansvar</th>
+                                                <th>Verksamhet</th>
+                                                <th>Aktivitet</th>
+                                                <th>Motpart</th>
+                                                <th>Objekt</th>
+                                                <th>Belopp</th>
+                                                <th>Text</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {avtal.rader.map(rad => (
+                                                <tr key={rad.rad}>
+                                                    <td>{rad.rad}</td>
+                                                    <td>{rad.konto}</td>
+                                                    <td>{rad.ansvar}</td>
+                                                    <td>{rad.verksamhet}</td>
+                                                    <td>{rad.aktivitet}</td>
+                                                    <td>{rad.motpart}</td>
+                                                    <td>{rad.objekt || '-'}</td>
+                                                    <td style={{textAlign: 'right'}}>
+                                                        {rad.belopp.toLocaleString('sv-SE')} kr
+                                                    </td>
+                                                    <td>{rad.text}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Rendera appen
+        ReactDOM.render(
+            <StadavtalApp />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

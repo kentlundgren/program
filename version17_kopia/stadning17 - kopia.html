@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering</title>
+    <link rel="stylesheet" href="styles17.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Städavtalshantering</h1>    
+        Här finns en <a href="https://kentlundgren.se/program/stadning_beskrivning.html" target="_blank">Guide för tydliga städavtal</a>
+    <div class="container">
+        <div class="info-box">
+            <h3>Viktig information:</h3>
+            <ul>
+                <li>Standardperiod för all kontering är 202501</li>   
+                <li>Intäktskonto 3153 används som standard</li>
+                <li>Kostnadskonto 6132 används som standard</li>
+                <li>För ändring av period då bokföringen ska ske, och ändring av konton, gör manuell justering i exporterad Excel-fil</li>
+            </ul>
+        </div>
+
+        <!-- Exempel sektion -->
+        <div class="examples-container">
+            <h2>Exempel på månadskontering för olika typer av städavtal - med olika användning av objektkod</h2>  
+            <h3>OBS - exemplen nedan är "laddade" med fejkade beloppsvärden - och ändras var gång sidan laddas om</h3>
+            
+            <!-- Dynamiskt genererade exempel -->
+            <div class="example-container" id="example-2a"></div>
+            <div class="example-container" id="example-2b"></div>
+            <div class="example-container" id="example-2c"></div>
+            <div class="example-container" id="example-2d"></div>
+        </div>
+
+        <!-- Förklaring av aktiviteter -->
+        <div class="example-container">
+            <h3>Förklaring av aktiviteter</h3>
+            <ul>
+                <li><strong>8036 - Fast kostnad/intäkt:</strong> Ordinarie städning enligt avtal - kodas ofta med verksamhet 9349</li>
+                <li><strong>8035 - Fönsterputs:</strong> Specialtjänst för fönsterputsning - utförs ofta av Site 1:2, ansvar 41612, verksamhet 9347</li>
+                <li><strong>8032 - Storstädning:</strong> Extra grundlig städning enligt överenskommelse - kodas ofta med verksamhet 9349</li>
+            </ul>
+        </div>
+
+        <!-- Formulärsektion -->
+        <div class="container">
+            <h2 class="section-header">Registrera nytt städavtal</h2>
+            <form id="contractForm">
+                <div class="form-group">
+                    <label for="contractName">Avtalsnamn:</label>
+                    <input type="text" id="contractName" required>
+                </div>
+
+                <div class="cost-section">
+                    <h3>Kostnadskontering (Konto 6132)</h3>
+                    <div class="form-row">
+                        <div class="form-column">
+                            <label for="costAnsvar">Ansvar för kostnad:</label>
+                            <input type="text" id="costAnsvar" required>
+                        </div>
+                        <div class="form-column">
+                            <label for="costVerksamhet">Verksamhet för kostnad:</label>
+                            <input type="text" id="costVerksamhet" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="objectCodeType">Typ av objektkodshantering:</label>
+                    <select id="objectCodeType" required>
+                        <option value="">Välj typ...</option>
+                        <option value="2a">2a - Samma objektkod för både kontering av intäkter och kostnader</option>
+                        <option value="2b">2b - Utan objektkod</option>
+                        <option value="2c">2c - Objektkod endast på intäkter</option>
+                        <option value="2d">2d - Objektkod endast på kostnader</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="objectCodeSection" style="display: none;">
+                    <label for="objectCode">Objektkod:</label>
+                    <input type="text" id="objectCode">
+                </div>
+
+                <!-- Aktivitetssektioner -->
+                <div class="activity-section">
+                    <h3>Fast intäkt (aktivitet: 8036)</h3>
+                    <div class="yearly-monthly-container">
+                        <div>
+                            <label for="yearly8036">Årsbelopp (kr):</label>
+                            <input type="number" id="yearly8036" step="0.01">
+                        </div>
+                        <div class="monthly-amount">
+                            <label for="amount8036">Månadsbelopp (kr):</label>
+                            <input type="number" id="amount8036" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ansvar8036">Ansvar:</label>
+                        <select id="ansvar8036" required>
+                            <option value="">Välj ansvar...</option>
+                            <option value="41611">41611</option>
+                            <option value="41612">41612</option>
+                            <option value="41621">41621</option>
+                            <option value="41622">41622</option>
+                            <option value="41632">41632</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="activity-section">
+                    <h3>Fönsterputs (aktivitet: 8035)</h3>
+                    <div class="yearly-monthly-container">
+                        <div>
+                            <label for="yearly8035">Årsbelopp (kr):</label>
+                            <input type="number" id="yearly8035" step="0.01">
+                        </div>
+                        <div class="monthly-amount">
+                            <label for="amount8035">Månadsbelopp (kr):</label>
+                            <input type="number" id="amount8035" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ansvar8035">Ansvar:</label>
+                        <select id="ansvar8035" required>
+                            <option value="41612">41612 (Default)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="activity-section">
+                    <h3>Storstädning (aktivitet: 8032)</h3>
+                    <div class="yearly-monthly-container">
+                        <div>
+                            <label for="yearly8032">Årsbelopp (kr):</label>
+                            <input type="number" id="yearly8032" step="0.01">
+                        </div>
+                        <div class="monthly-amount">
+                            <label for="amount8032">Månadsbelopp (kr):</label>
+                            <input type="number" id="amount8032" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ansvar8032">Ansvar:</label>
+                        <select id="ansvar8032" required>
+                            <option value="">Välj ansvar...</option>
+                            <option value="41611">41611</option>
+                            <option value="41612">41612</option>
+                            <option value="41621">41621</option>
+                            <option value="41622">41622</option>
+                            <option value="41632">41632</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="button" class="calculate-monthly" onclick="updateMonthlyAmounts()">
+                    Beräkna månadsbelopp från årsbelopp
+                </button>
+
+                <div class="form-group">
+                    <label for="motpart">Motpart för intäkter:</label>
+                    <select id="motpart" required>
+                        <option value="">Välj motpart...</option>
+                        <option value="120">120 - UTBildning</option>
+                        <option value="130">130 - OMSorg</option>
+                        <option value="150">150 - Stadsledningsförvaltning</option>
+                        <option value="170">170 - Individ och familjeförvaltningen</option>
+                        <option value="180">180 - Teknik och Fritid</option>
+                    </select>
+                </div>
+
+                <button type="submit">Lägg till avtal</button>
+            </form>
+        </div>
+
+        <div class="container">
+            <h2 class="section-header">Befintliga städavtal</h2>
+            <div id="contractsList"></div>
+        </div>
+    </div>
+
+    <!-- Återställningsknapp -->
+    <button id="resetButton" class="reset-button" title="hej">
+        <span class="reset-icon">?</span>
+    </button>
+
+    <script src="stadavtal17.js"></script>
+</body>
+</html>

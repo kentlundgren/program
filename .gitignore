@@ -6,6 +6,15 @@ build/
 *.log
 *.tmp
 
+# Next.js specifikt
+.next/
+.next*/
+next-env.d.ts
+.vercel
+*.pack
+*.pack.gz
+*.pack.old
+
 # Specifika filer som visas i Source Control
 testprogram/**/settings*.json
 testprogram/**/*.key

@@ -1,0 +1,215 @@
+/**
+ * CSS-modul för Footer-komponenten
+ * Version: 1.4.0
+ * 
+ * Här skedde en uppdatering för att:
+ * - Lägga till stilar för den förklarande texten "Byggd med:" före logotyperna
+ * - Skapa en wrapper runt teknologilogotyperna för bättre positionering
+ * - Justera storlek och avstånd för optimal läsbarhet
+ */
+
+.footer {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: auto;
+}
+
+.footerContent {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: var(--spacing-md);
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+}
+
+.smallLogo {
+  height: 24px;
+  margin-right: var(--spacing-sm);
+}
+
+.footerLink {
+  color: var(--white);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footerLink:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.versionText {
+  margin-left: 5px;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* Wrapper för teknologiinformation */
+.techLogosWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.techLabel {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+/* Stilar för tekniska logotyper */
+.techLogos {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.logoLink {
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 4px;
+  padding: 4px;
+  min-width: 28px;
+  height: 28px;
+}
+
+.logoLink:hover {
+  transform: translateY(-2px) scale(1.1);
+  background-color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+.techLogo {
+  max-height: 20px;
+  max-width: 20px;
+  object-fit: contain;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.logoLink:hover .techLogo {
+  transform: rotate(5deg);
+}
+
+.footerLinks {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footerLinks a, 
+.footerButton {
+  color: var(--white);
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.footerLinks a:hover, 
+.footerButton:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.navigationToggle {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-sm);
+}
+
+.toggleButton {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: background-color var(--transition-speed);
+  font-size: 0.9rem;
+}
+
+.toggleButton:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+  .footerContent {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .footerLeft {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .footerLinks {
+    justify-content: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .footerLogo {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .smallLogo {
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+  
+  .techLogosWrapper {
+    margin-top: var(--spacing-xs);
+    justify-content: center;
+  }
+  
+  .versionText {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .footerLinks a,
+  .footerButton {
+    font-size: 0.9rem;
+  }
+  
+  .navigationToggle {
+    margin-top: var(--spacing-xs);
+  }
+  
+  .toggleButton {
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+} 

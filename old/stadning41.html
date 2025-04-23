@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Städavtalshantering - Version 41</title>
+    
+    <!-- NYTT I V41: Bootstrap CSS flyttad till head för att säkerställa styling före rendering -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- NYTT I V41: Vår egen CSS kommer efter Bootstrap för att kunna överstyra vid behov -->
+    <link rel="stylesheet" href="styles41.css">
+    
+    <!-- NYTT I V41: JavaScript-bibliotek samlade i head med defer-attribut -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- NYTT I V41: Vår JavaScript-fil med type="module" för ES6-moduler -->
+    <script defer type="module" src="stadavtal41.js"></script>
+</head>
+
+<body class="container-fluid">
+    <!-- NYTT I V41: Bootstrap navbar istället för enkel header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand">Städavtalshantering - Version 41</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://kentlundgren.se/program/stadning_beskrivning.html" target="_blank">
+                            Guide för tydliga städavtal
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://kentlundgren.se/program/aldre_stadning7.html" target="_blank">
+                            Sök
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NYTT I V41: Bootstrap card för informationsrutan -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Viktig information</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Period anges i format YYYYMM (exempel: 202501)</li>
+                <li class="list-group-item">Endast period för år 2025 är tillåten (202501-202512)</li>
+                <li class="list-group-item">Intäktskonto 3153 används som standard</li>
+                <li class="list-group-item">Kostnadskonto 6132 används som standard</li>
+            </ul>
+
+            <!-- NYTT I V41: Bootstrap table för dimensioner -->
+            <h3 class="mt-4">Excel-export innehåller 17 dimensioner:</h3>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>1. Rad</td>
+                            <td>2. Konto</td>
+                            <td>3. Ansvar</td>
+                        </tr>
+                        <tr>
+                            <td>4. Projekt (alltid tom)</td>
+                            <td>5. Anl (alltid tom)</td>
+                            <td>6. Verksamhet</td>
+                        </tr>
+                        <tr>
+                            <td>7. Aktivitet</td>
+                            <td>8. Motpart</td>
+                            <td>9. Objekt/Frikod</td>
+                        </tr>
+                        <tr>
+                            <td>10. MK (alltid tom)</td>
+                            <td>11. MS (alltid tom)</td>
+                            <td>12. Period</td>
+                        </tr>
+                        <tr>
+                            <td>13. Periodiseringsnyckel (alltid tom)</td>
+                            <td>14. Val.belopp</td>
+                            <td>15. Valuta (alltid tom)</td>
+                        </tr>
+                        <tr>
+                            <td>16. Belopp</td>
+                            <td>17. Text</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- NYTT I V41: Smart kontering i egen card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Smart kontering</h2>
+        </div>
+        <div class="card-body">
+            <!-- NYTT I V41: Bootstrap alert för felmeddelanden -->
+            <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="ansvarskod" class="form-label">Ansvarskod:</label>
+                        <select id="ansvarskod" class="form-select" data-type="ansvar" required>
+                            <option value="">-- Välj ansvarskod --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="verksamhetskod" class="form-label">Verksamhetskod:</label>
+                        <select id="verksamhetskod" class="form-select" data-type="verksamhet" required>
+                            <option value="">-- Välj verksamhetskod --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- NYTT I V41: Bootstrap alert för varningar -->
+            <div id="kombinationsVarning" class="alert alert-warning mt-3" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- NYTT I V41: Formulär i Bootstrap card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Registrera nytt städavtal</h2>
+        </div>
+        <div class="card-body">
+            <form id="avtalsFormular">
+                <!-- Grundinformation -->
+                <div class="mb-4">
+                    <h3 class="border-bottom pb-2">Grundinformation</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="avtalsnamn" class="form-label">Avtalsnamn:</label>
+                            <input type="text" id="avtalsnamn" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="period" class="form-label">Period (YYYYMM):</label>
+                            <input type="text" 
+                                   id="period" 
+                                   class="form-control"
+                                   pattern="2025(0[1-9]|1[0-2])"
+                                   placeholder="202501"
+                                   required>
+                            <div class="form-text">Exempel: 202501 för januari 2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Konteringsinformation -->
+                <div class="mb-4">
+                    <h3 class="border-bottom pb-2">Konteringsinformation</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="kostnadskonto" class="form-label">Kostnadskonto:</label>
+                            <input type="text" id="kostnadskonto" class="form-control" value="6132" readonly>
+                            <div class="form-text">Standard: 6132</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="motpart" class="form-label">Motpart:</label>
+                            <select id="motpart" class="form-select" required>
+                                <option value="">Välj motpart...</option>
+                                <option value="120">120 - UTBildning</option>
+                                <option value="130">130 - OMSorg</option>
+                                <option value="150">150 - Stadsledningsförvaltning</option>
+                                <option value="162">162 - Kultur och Fritid</option>
+                                <option value="170">170 - Individ och familjeförvaltningen</option>
+                                <option value="180">180 - Teknik och Fritid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objektkod -->
+                <div class="mb-4">
+                    <h3 class="border-bottom pb-2">Objektkod</h3>
+                    <div class="mb-3">
+                        <label for="objektkodsTyp" class="form-label">Typ av objektkodshantering:</label>
+                        <select id="objektkodsTyp" class="form-select" required>
+                            <option value="">Välj typ...</option>
+                            <option value="2a">2a - Samma objektkod för både kontering av intäkter och kostnader</option>
+                            <option value="2b">2b - Utan objektkod</option>
+                            <option value="2c">2c - Objektkod endast på intäkter</option>
+                            <option value="2d">2d - Objektkod endast på kostnader</option>
+                        </select>
+                    </div>
+                    <div id="objektkodContainer" class="mb-3" style="display: none;">
+                        <label for="objektkod" class="form-label">Objektkod:</label>
+                        <input type="text" id="objektkod" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Aktiviteter och belopp -->
+                <div class="mb-4">
+                    <h3 class="border-bottom pb-2">Aktiviteter och belopp</h3>
+                    
+                    <!-- Fast intäkt -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h4 class="mb-0">Fast intäkt (8036)</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="arsbelopp8036" class="form-label">Årsbelopp:</label>
+                                    <input type="number" id="arsbelopp8036" class="form-control" step="0.01">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="manadsbelopp8036" class="form-label">Månadsbelopp:</label>
+                                    <input type="number" id="manadsbelopp8036" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fönsterputs -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h4 class="mb-0">Fönsterputs (8035)</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="arsbelopp8035" class="form-label">Årsbelopp:</label>
+                                    <input type="number" id="arsbelopp8035" class="form-control" step="0.01">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="manadsbelopp8035" class="form-label">Månadsbelopp:</label>
+                                    <input type="number" id="manadsbelopp8035" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storstädning -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h4 class="mb-0">Storstädning (8032)</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="arsbelopp8032" class="form-label">Årsbelopp:</label>
+                                    <input type="number" id="arsbelopp8032" class="form-control" step="0.01">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="manadsbelopp8032" class="form-label">Månadsbelopp:</label>
+                                    <input type="number" id="manadsbelopp8032" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Totalt belopp -->
+                    <!-- NYTT I V41: Bootstrap alert för totalsumma -->
+                    <div class="alert alert-info mt-3">
+                        <h4 class="alert-heading">Totalt månadsbelopp:</h4>
+                        <div id="totalBelopp" class="display-6">0 kr</div>
+                    </div>
+                </div>
+                        
+                        
+                        <!-- Knappar -->
+                <!-- NYTT I V41: Bootstrap button styling och flexbox layout -->
+                <div class="d-flex gap-2 mb-4">
+                    <button type="submit" class="btn btn-primary">Spara avtal</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">
+                        Rensa formulär
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista över befintliga avtal -->
+    <!-- NYTT I V41: Bootstrap card för avtalslistan -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Befintliga städavtal</h2>
+        </div>
+        <div class="card-body">
+            <div id="avtalsList">
+                <!-- NYTT I V41: Bootstrap table för avtalslistan -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Avtalsnamn</th>
+                            <th>Period</th>
+                            <th>Ansvar</th>
+                            <th>Verksamhet</th>
+                            <th>Totalt belopp</th>
+                            <th>Åtgärder</th>
+                        </tr>
+                    </thead>
+                    <tbody id="avtalsListBody">
+                        <!-- Fylls i dynamiskt av JavaScript -->
+                    </tbody>
+                </table>
+                
+                <!-- NYTT I V41: Bootstrap alert för tom lista -->
+                <div id="tomListaMeddelande" class="alert alert-info" style="display: none;">
+                    Inga städavtal tillagda ännu.
+                </div>
+            </div>
+            
+            <!-- NYTT I V41: Bootstrap modal för bekräftelse av radering -->
+            <div class="modal fade" id="raderaModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Bekräfta radering</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Är du säker på att du vill radera detta avtal?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                            <button type="button" class="btn btn-danger" id="bekraftaRadering">Radera</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel-export sektion -->
+    <!-- NYTT I V41: Bootstrap card för export-funktionalitet -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Excel-export</h2>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success" onclick="window.exportToExcel()">
+                <i class="bi bi-file-earmark-excel"></i> Exportera till Excel
+            </button>
+            <div class="form-text mt-2">
+                Exporterar alla städavtal till en Excel-fil med 17 dimensioner enligt standard.
+            </div>
+        </div>
+    </div>
+
+    <!-- NYTT I V41: Bootstrap toast för meddelanden -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="meddelandeToast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto">Meddelande</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMeddelande">
+                <!-- Fylls i dynamiskt av JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NYTT I V41: Bootstrap footer med version och datum -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <div class="container">
+            <p class="mb-0">
+                Städavtalshantering - Version 41 - 
+                <span class="text-muted">Senast uppdaterad: December 2024</span>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

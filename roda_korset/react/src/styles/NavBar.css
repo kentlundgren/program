@@ -1,0 +1,178 @@
+/* 
+ * NavBar Styling
+ * Version: 1.0.0
+ * Responsiv navigationsmeny för Röda Korsets webbplats
+ */
+
+.navbar {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Logotyp */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  height: 50px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo img:hover {
+  transform: scale(1.05);
+}
+
+/* Navigationslänkar */
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar-menu li {
+  margin: 0 0.5rem;
+}
+
+.navbar-menu a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.navbar-menu a:hover {
+  background-color: #f9f1f2;
+  color: #e11c28;
+}
+
+.navbar-menu a.active {
+  color: #e11c28;
+  background-color: #f9f1f2;
+  font-weight: 600;
+}
+
+/* Hamburger-meny för mobilenheter */
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+}
+
+.navbar-toggle span {
+  height: 3px;
+  width: 100%;
+  background-color: #333;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Utvecklarläge - knapp för att växla navigationsmetod */
+.nav-dev-mode {
+  margin-left: 1rem;
+  border-left: 1px solid #ddd;
+  padding-left: 1rem;
+}
+
+.nav-toggle-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.nav-toggle-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Responsiv design */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-toggle {
+    display: flex;
+  }
+
+  .navbar-toggle.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+  }
+
+  .navbar-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-toggle.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+  }
+
+  .navbar-menu {
+    position: absolute;
+    flex-direction: column;
+    background-color: #fff;
+    width: 100%;
+    left: 0;
+    top: 68px; /* Anpassa efter navbarens höjd */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    align-items: flex-start;
+    transform: translateY(-150%);
+    transition: transform 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .navbar-menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .navbar-menu li {
+    width: 100%;
+    margin: 0;
+  }
+
+  .navbar-menu a {
+    padding: 1rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .nav-dev-mode {
+    margin: 1rem 0 0;
+    padding: 0 2rem;
+    border-left: none;
+    border-top: 1px solid #ddd;
+    width: 100%;
+    padding-top: 1rem;
+  }
+} 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klimatkollen Företagsdata</title>
+    <!-- Länk till extern CSS-fil -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Länk till Chart.js från CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Klimatkollen Företagsdata</h1>
+    </header>
+    
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Sök företag..." aria-label="Sök företag">
+            <button id="searchButton" class="search-button">Sök</button>
+        </div>
+        
+        <div id="loadingIndicator" class="loading" style="display: none;">
+            Laddar data...
+        </div>
+        
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        
+        <div id="companiesContainer" class="companies-grid"></div>
+    </div>
+
+    <!-- Länkar till externa JavaScript-filer -->
+    <script src="api.js"></script>
+    <script src="charts.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
