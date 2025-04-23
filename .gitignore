@@ -19,6 +19,10 @@ next-env.d.ts
 # Ignorera hela testprogram-mappen och allt innehåll
 testprogram/
 testprogram/**/*
+Testprogram/
+Testprogram/**/*
+**/testprogram/node_modules/
+**/Testprogram/node_modules/
 
 # Tidigare specifika filter (behålls som referens)
 # testprogram/**/settings*.json
